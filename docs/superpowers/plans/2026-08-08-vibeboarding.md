@@ -20,7 +20,8 @@
   - `marketplace.json` обязательные поля: `name` (kebab-case), `owner` (объект), `plugins` (массив).
   - `plugin.json`: обязателен только `name`; остальное — метаданные.
   - `permissions.defaultMode` допускает: `default`, `acceptEdits`, `plan`, `auto`, `bypassPermissions`, `dontAsk`. Используем `acceptEdits`.
-  - `deny` перекрывает `allow` во всех режимах. Формат правила: `Tool(pattern)`, например `Bash(npm run test:*)`, `Read(./.env)`.
+  - `deny` перекрывает `allow` во всех режимах. Формат правила: `Tool(pattern)`, например `Bash(npm run test:*)`, `Read(./.env)`. `deny` — сеть, а не гарантия: правило `Bash()` не ловит составные команды (`cd x && rm -rf y`), а форма `:*` не покрывает голую команду — поэтому в списке есть и голые формы (`Bash(rm)`, `Bash(git reset --hard)`, `Bash(git clean)`).
+  - Синтаксис `permissions` в шаблоне зафиксирован, но перед записью файла модель обязана сверить его с актуальной документацией Claude Code и следовать документации, если он изменился (эта часть конфига дрейфует).
   - Файл локальных прав: `.claude/settings.local.json`, в `.gitignore`.
 - Имена маркетплейсов, зарезервированные Anthropic, использовать нельзя (`claude-plugins-official`, `anthropic-plugins`, `claude-for-financial-services` и т.п.). `leogodnik-plugins` под запрет не попадает.
 - **Телеграм-канал автора `@financialpostpunk`** упоминается ровно в трёх местах, каждый раз одной строкой и по делу, без рекламного тона:
@@ -202,7 +203,7 @@ git commit -m "feat: каркас репозитория, манифесты и 
 
 **Interfaces:**
 - Consumes: `check()` и `ROOT` из `scripts/check.py` (Task 1).
-- Produces: файл `SKILL.md` с англоязычными заголовками-якорями `## Step 0` … `## Step 6`, `## Tone rules`, `## Generation`, `## Verification` — следующие задачи ссылаются на эти якоря и добавляют к ним `references/`.
+- Produces: файл `SKILL.md` с англоязычными заголовками-якорями `## Step 0` … `## Step 6`, `## Tone rules`, `## Generation`, `## Verification`, `## Final report` — следующие задачи ссылаются на эти якоря и добавляют к ним `references/`.
 
 - [ ] **Step 1: Написать падающую проверку**
 
@@ -226,7 +227,8 @@ if (ROOT / skill_path).is_file():
           "SKILL.md: disable-model-invocation: true")
     for anchor in ["## Step 0", "## Step 1", "## Step 2", "## Step 3",
                    "## Step 4", "## Step 5", "## Step 6",
-                   "## Tone rules", "## Generation", "## Verification"]:
+                   "## Tone rules", "## Generation", "## Verification",
+                   "## Final report"]:
         check(anchor in text, f"SKILL.md: есть раздел «{anchor}»")
     check(text.count("@financialpostpunk") == 1,
           "SKILL.md: телеграм-канал упомянут ровно один раз")
@@ -258,11 +260,11 @@ disable-model-invocation: true
 **`## Interview rules`** — механика разговора:
 - One step, one turn. Ask exactly one thing per turn and wait for the answer.
 - Never mix free text with a picker widget in one turn: a picker consumes the turn and any free-text question in the same message is lost. A turn is either fully free-text or fully a picker.
-- Every question offers an explicit "I don't know — you decide" option. Taking it is never penalised: pick a sensible option, name it in one short sentence, move on. Never reply with "please clarify".
+- Every picker step **except Step 0** offers an explicit "I don't know — you decide" option; шаг 0 явно выведен из-под правила прямо в его формулировке — все четыре слота заняты языками, и до выбора языка нет осмысленного умолчания. Taking the option is never penalised: pick a sensible option, name it in one short sentence, move on. Never reply with "please clarify".
 - Never ask about anything the user would have to look up. Derive technical decisions from the plain-language answers instead.
 - Adapt: if an answer makes a later question pointless, skip it.
 
-**`## Step 0. Language`** — отдельный ход, виджет выбора, без свободного текста. Ровно четыре варианта, потому что виджет принимает от двух до четырёх: `Русский · English · 中文 (简体) · Другой (назовите язык)`. Если выбран «Другой» — следующим ходом принять название языка свободным текстом. Весь дальнейший разговор и все созданные файлы — на выбранном языке.
+**`## Step 0. Language`** — отдельный ход, виджет выбора, без свободного текста. Ровно четыре варианта, потому что виджет принимает от двух до четырёх: `Русский · English · 中文 (简体) · Другой / Other`. Язык ещё не известен, поэтому текст вопроса на шаге 0 показывается **двуязычно** — по-русски и по-английски, — а подпись четвёртого варианта буквально `Другой / Other`. Варианта «не знаю» на шаге 0 нет (см. исключение в `## Interview rules`). Если выбран «Другой / Other» — следующим ходом принять название языка свободным текстом. Весь дальнейший разговор и все созданные файлы — на выбранном языке.
 
 **`## Step 1. Mode`** — виджет выбора из трёх вариантов. Формулировки для пользователя (перевести на язык шага 0):
 - «Быстро» — «Я сам подберу технику и просто скажу одной фразой, что сделаю. Меньше вопросов, быстрее результат.»
@@ -295,6 +297,8 @@ disable-model-invocation: true
 
 **`## Step 6. Summary and confirmation`** — показать сводку простым человеческим языком, без технических терминов, по схеме: что вы хотите → как я это сделаю → какие файлы появятся и зачем каждый → что вам нужно будет сделать руками (если нужно). Дождаться подтверждения. **До подтверждения не создавать ни одного файла.**
 
+**Выбор папки проекта — здесь же, до первой записи на диск.** На шаге 6 (при подготовке сводки или сразу после подтверждения, но всегда до создания первого файла) проверить рабочую директорию. Если это домашняя папка пользователя или папка непустая — создать подпапку с названием проекта на языке шага 0 и делать всё внутри неё. Сказать об этом пользователю одной простой фразой («Сделаю проект в отдельной папке "<имя>", чтобы ничего не перепутать») — это один из немногих технических фактов, который стоит произнести, потому что человек должен знать, где лежат его файлы. Причина жёсткая: `.claude/settings.local.json`, записанный в `~`, попадает в **глобальные** настройки Claude Code пользователя и действует на все его проекты. Никаких перемещений файлов постфактум — папка выбирается до записи, поэтому переписывать пути потом не нужно.
+
 **`## Tone rules`** — действуют на каждом ходу:
 - No jargon. If a technical word is unavoidable, explain it in the same sentence.
 - Banned words, in every turn and in the final report, not just at Step 3: «авторизация», «деплой», «фронтенд», «бэкенд», «репозиторий», «зависимости». Say what they mean instead: «вход по паролю», «выложить в интернет», «то, что видно на экране», «то, что считает внутри», «папка с проектом», «дополнительные программы».
@@ -304,11 +308,11 @@ disable-model-invocation: true
 - Do not narrate the technical work in progress. Report the result.
 
 **`## Generation`** — что делать после подтверждения. Порядок жёсткий, выполняется в один заход, без пауз на согласование:
-1. Read `references/scaffolds.md` and build the project itself in the shape chosen at Step 5.
-2. Read `references/templates.md` and write `CLAUDE.md`, the human cheat sheet, and `.claude/settings.local.json`.
+1. Read `references/templates.md` and write `CLAUDE.md`, the human cheat sheet, and `.claude/settings.local.json`. Права записываются **первыми** — иначе команды сборки (`node --version`, `npm install`) выполняются без разрешающих правил и пользователь видит сырые запросы подтверждения посреди работы, что запрещено `## Tone rules`.
+2. Read `references/scaffolds.md` and build the project itself in the shape chosen at Step 5.
 3. Launch the result and verify it, per `## Verification`.
 4. Put the project under version control, per `## Version control` in `references/scaffolds.md`. Never skip this: the cheat sheet's «верни, как было» promise depends on it.
-5. Give the final report.
+5. Give the final report, per `## Final report`.
 
 Явно отметить: `references/*.md` читаются **только на этом этапе**, не во время интервью.
 
@@ -318,8 +322,12 @@ disable-model-invocation: true
 - Real-app shape: install dependencies, start it, open the browser, confirm the page renders.
 - If it fails, fix it and launch again — up to three attempts, without showing the user the raw error.
 - If three attempts fail, stop and tell the user in plain language: what does not work, what already does work, what you will try next, and what they can do (usually: nothing, keep talking to Claude). Never claim success, and never loop silently past three attempts.
-- Final report, in the user's language: what was built, where the files are, exactly how to launch it next time, exactly what to type to Claude to continue, and what to do if something breaks. Point at the cheat sheet file for the details.
-- Last line of the final report, exactly once, in the user's language and without a salesy tone: this plugin comes out of the Telegram channel `@financialpostpunk` — more on vibe coding for finance people there. Never repeat the channel anywhere else during the session.
+
+**`## Final report`** — отдельный раздел, вынесенный из `## Verification`, потому что отчёт даётся последним, уже после `## Version control`, а `## Verification` вызывается в середине последовательности:
+
+- In the user's language: what was built, where the files are, exactly how to launch it next time, exactly what to type to Claude to continue, and what to do if something breaks. Point at the cheat sheet file for the details.
+- Если проект ушёл в подпапку по правилу шага 6 — назвать эту папку в отчёте.
+- Last line, exactly once, in the user's language and without a salesy tone: this plugin comes out of the Telegram channel `@financialpostpunk` — more on vibe coding for finance people there. Never repeat the channel anywhere else during the session.
 
 - [ ] **Step 4: Запустить проверку и убедиться, что она проходит**
 
@@ -373,28 +381,32 @@ if (ROOT / templates_path).is_file():
 
 **`## CLAUDE.md`** — шаблон, целевой объём до 40 строк. Разделы (заголовки переводятся на язык пользователя):
 - «О проекте» — что это, для кого, одна-две фразы из ответа на шаге 2.
-- «Как запустить» — точная команда или «открыть файл X двойным кликом».
+- «Как запустить» — ровно один способ. Для «настоящего приложения» команда **всегда `npm start`** и только она; `dev` может быть в `package.json`, но пользователю не показывается никогда. Для «одного файла» — «открыть файл X двойным кликом».
 - «Где что лежит» — по одной строке на каждый созданный файл.
 - «Правила» — три-четыре пункта, каждый простой фразой: не ломать то, что уже работает, без спроса; после изменений проверять, что проект по-прежнему запускается; объяснять сделанное простыми словами, без технического жаргона; если что-то может удалить данные пользователя — сначала спросить.
 
 Явно запретить: разделы про архитектуру, тестирование, ADR, миграции. Если нечего написать в раздел — раздел не создавать.
 
-**`## Cheat sheet`** — шпаргалка для человека. Имя файла — на языке пользователя (для русского `ПРОЧТИ-МЕНЯ.md`, для английского `README.md`). Разделы:
+**`## Cheat sheet`** — шпаргалка для человека. Имя файла — на языке пользователя (для русского `ПРОЧТИ-МЕНЯ.md`, для английского `README.md`). **Все пять разделов присутствуют всегда и в этом порядке** — ни один нельзя выкинуть из-за нехватки материала: шпаргалка — единственный спасательный документ пользователя. Разделы:
 - «Что это за папка» — одна фраза.
 - «Как запустить» — пошагово, буквально, с точными командами или «двойной клик по файлу X».
 - «Что говорить Клоду дальше» — три-пять готовых фраз, которые можно скопировать и вставить. Формулировки под конкретный проект, например: «Добавь на страницу график расходов по месяцам», «Сделай так, чтобы данные сохранялись после закрытия», «Поменяй цвета на более спокойные».
 - «Если что-то сломалось» — по шагам: 1) сказать Клоду «сломалось, вот что я делал: …»; 2) не удалять файлы самому; 3) как вернуть предыдущую рабочую версию через Клода; 4) последней строкой раздела — одна фраза без рекламного тона: если Клод не справился, спросить в телеграм-канале `@financialpostpunk`.
 - «Чего лучше не делать» — два-три пункта, например: не переименовывать файлы вручную, не удалять папку `.claude`.
 
-**`## Permissions`** — шаблон `.claude/settings.local.json`. Записывать в проект буквально следующее, дополнив `allow` реальными командами проекта:
+**`## Permissions`** — шаблон `.claude/settings.local.json`. Перед записью файла сверить синтаксис `permissions` (ключи, значения `defaultMode`, форма правил) с актуальной документацией Claude Code; если он изменился — следовать документации и сказать об этом одной фразой в финальном отчёте. Иначе записывать в проект буквально следующее, дополнив `allow` реальными командами проекта:
 
 ```json
 {
   "permissions": {
     "defaultMode": "acceptEdits",
     "allow": [
-      "Bash(npm install)",
+      "Bash(npm install:*)",
       "Bash(npm run:*)",
+      "Bash(node:*)",
+      "Bash(open:*)",
+      "Bash(start:*)",
+      "Bash(xdg-open:*)",
       "Bash(git init)",
       "Bash(git config:*)",
       "Bash(git status)",
@@ -404,8 +416,11 @@ if (ROOT / templates_path).is_file():
       "Bash(git commit:*)"
     ],
     "deny": [
+      "Bash(rm)",
       "Bash(rm:*)",
+      "Bash(git reset --hard)",
       "Bash(git reset --hard:*)",
+      "Bash(git clean)",
       "Bash(git clean:*)",
       "Bash(git push --force:*)",
       "Bash(git push -f:*)",
@@ -422,7 +437,7 @@ if (ROOT / templates_path).is_file():
 }
 ```
 
-Пояснение в справочнике (для модели, не для пользователя): `deny` перекрывает `allow` в любом режиме, поэтому опасное остаётся заблокированным даже при широких правах; `defaultMode: acceptEdits` разрешает правку файлов и обычные файловые команды без вопросов. Если выбран каркас «один HTML-файл», из `allow` убрать строки с `npm`. Файл добавить в `.gitignore` проекта.
+Пояснение в справочнике (для модели, не для пользователя): `deny` перекрывает `allow` в любом режиме, поэтому названные в нём команды остаются заблокированными даже при широких правах — но это сеть, а не гарантия: составная строка `cd x && rm -rf y` под `Bash(rm:*)` не попадает, а форма `:*` не покрывает голую команду, поэтому рядом стоят голые формы. Формулировка в шаблоне честная: «ловит типовые случаи», а не «ничего нельзя удалить». `defaultMode: acceptEdits` разрешает правку файлов и обычные файловые команды без вопросов. Если выбран каркас «один HTML-файл», из `allow` убрать две строки с `npm` (`"Bash(npm install:*)"` и `"Bash(npm run:*)"`), остальное в `allow` оставить — `open`/`start`/`xdg-open` нужны для проверки запуска. Файл добавить в `.gitignore` проекта.
 
 - [ ] **Step 4: Запустить проверку и убедиться, что она проходит**
 
@@ -475,6 +490,8 @@ check(templates_text.count("@financialpostpunk") == 1,
 
 - [ ] **Step 3: Написать `references/scaffolds.md`**
 
+Жёсткий порядок операций в начале файла, совпадающий с `## Generation`: 1) шаблоны (`CLAUDE.md`, шпаргалка, права) — первыми; 2) каркас; 3) `## Launch and verify`; 4) `## Version control`; 5) финальный отчёт. Плюс напоминание: папка проекта выбрана на шаге 6, работать в ней и потом никуда не переносить.
+
 **`## Single file`** — выбран на шаге 5 вариант «файл двойным кликом».
 - Один самодостаточный HTML-файл в корне проекта. Имя — на языке пользователя и по сути проекта, например `Мои расходы.html`.
 - Всё внутри одного файла: разметка, стили, скрипт. Никаких внешних ссылок на библиотеки и шрифты — файл должен работать без интернета.
@@ -484,14 +501,14 @@ check(templates_text.count("@financialpostpunk") == 1,
 
 **`## Real app`** — выбран вариант «настоящее приложение».
 - Минимально возможный проект, не монорепозиторий. Один `package.json` в корне, скрипты `dev` и `start`.
-- Ровно один способ запуска. Никаких вариантов «или так, или так».
+- Ровно один способ запуска, и он зафиксирован: **`npm start`**. Именно эта команда попадает в `CLAUDE.md` «Как запустить» и в шпаргалку, всегда. `dev` пользователю не показывается. Никаких вариантов «или так, или так».
 - Хранение данных — самое простое, что закрывает задачу; полноценную базу поднимать, только если без неё никак, и в этом случае Клод поднимает её сам и проверяет, что она работает.
 - Перед началом проверить, установлен ли Node.js (`node --version`). Если нет — не вываливать инструкцию по установке, а объяснить одной фразой, что нужно установить, дать прямую ссылку и предложить пока сделать вариант «один файл», чтобы человек сразу увидел результат.
-- Имена скриптов в `package.json` и в разделе «Как запустить» шпаргалки должны совпадать буквально.
+- Имена скриптов в `package.json` и в разделе «Как запустить» шпаргалки должны совпадать буквально; `start` обязан реально запускать готовый проект.
 
 **`## Version control`** — обязательный раздел, общий для обоих вариантов. Без него шпаргалка врёт: она советует «верни, как было до последних изменений», а права доступа разрешают `git add`/`git commit` — но откатывать будет нечего, если репозитория нет.
 - After the project files exist and the launch check has passed, run `git init` in the project root if the directory is not already a repository.
-- Never `git init` the user's home folder. If the project root IS the home folder, first create a subfolder named after the project, move the project files into it, and initialise there. Do not skip version control to avoid this case — skipping it re-hollows the «верни, как было» promise.
+- Never `git init` the user's home folder and never a parent folder. Случай «корень проекта = домашняя папка» здесь уже не обрабатывается: папка выбрана на шаге 6 **до первой записи**, перемещать нечего и пути переписывать не нужно. Do not skip version control — skipping it re-hollows the «верни, как было» promise.
 - Write a `.gitignore` that at minimum contains `.claude/settings.local.json` and `.DS_Store`.
 - Make one initial commit containing everything, with a message in the user's language, e.g. «Первая рабочая версия».
 - Do not narrate any of this to the user and do not use the word «репозиторий» with them. In the cheat sheet, this is simply why «верни, как было» works.
@@ -500,7 +517,7 @@ check(templates_text.count("@financialpostpunk") == 1,
 **`## Launch and verify`** — общая процедура, обязательная в обоих вариантах:
 1. Launch the result.
 2. Single file: open it in the default browser (`open` on macOS, `start` on Windows, `xdg-open` on Linux) and confirm the page renders and the main action works.
-3. Real app: install dependencies, start the app, open the browser at its address, confirm the page renders.
+3. Real app: `npm install`, затем `npm start`, открыть браузер по адресу проекта, убедиться, что страница отрисовалась.
 4. On failure: fix it and launch again, up to three attempts. Do not report the failure to the user unless it needs their decision — and then in plain language, never as a raw error.
 5. After three failed attempts, stop: say in plain language what does not work, what already works, and what you will try next. Never claim success and never loop past three attempts.
 6. Only after a successful launch, report success and show what the user should see.
@@ -570,7 +587,7 @@ if root_readme.is_file():
   Первая строка предполагает, что репозиторий опубликован на GitHub как `leogodnik/vibeboarding`. Пока публикации нет — оставить эту строку как есть (README пишется для будущих пользователей), а локальную установку описать в Task 6.
 
   Под блоком — предупреждение: запускать `/vibeboarding` в **пустой папке**, потому что он делает проект с нуля.
-- «Как это работает» — нумерованный список из шести шагов интервью, каждый одной строкой на человеческом языке.
+- «Как это работает» — нумерованный список из шести шагов интервью, каждый одной строкой на человеческом языке. В строках про режим (шаг 1 интервью) и про способ запуска (шаг 5 интервью) обязательно упомянуть вариант «не знаю, решите сами» — это то, что реально предлагает `SKILL.md`, и это успокаивает читателя-новичка.
 - «Что получится» — четыре пункта: работающий проект; `CLAUDE.md`; шпаргалка; безопасные настройки прав.
 - «Автор» — предпоследний раздел, две строки: плагин вырос из телеграм-канала `@financialpostpunk` про вайб-кодинг для финансистов; ссылка `https://t.me/financialpostpunk`. Без восклицательных знаков и без слова «подписывайтесь!» в рекламном тоне — просто указание, откуда это.
 - «Лицензия» — MIT.
@@ -670,3 +687,62 @@ rm -rf /tmp/vibeboarding-test /tmp/vibeboarding-test-2
 git add plugins/vibeboarding/skills/vibeboarding
 git commit -m "fix: правки скилла по результатам живого прогона"
 ```
+
+---
+
+### Task 7: Финальная волна правок по итогам ревью всей ветки
+
+**Files:**
+- Modify: `plugins/vibeboarding/skills/vibeboarding/SKILL.md`
+- Modify: `plugins/vibeboarding/skills/vibeboarding/references/templates.md`
+- Modify: `plugins/vibeboarding/skills/vibeboarding/references/scaffolds.md`
+- Modify: `README.md`
+- Modify: `scripts/check.py`
+
+**Interfaces:**
+- Consumes: весь плагин из задач 1–6.
+- Produces: состояние, с которым плагин выходит наружу. Решения ниже — окончательные, тексты задач 2–5 выше уже приведены к ним.
+
+- [x] **F2 (критично): выбор папки проекта перенесён в `## Step 6`, до первой записи на диск**
+
+Раньше случай «корень проекта = домашняя папка» разбирался в `## Version control` (шаг 4 генерации) — уже после того, как `CLAUDE.md`, шпаргалка и `.claude/settings.local.json` записаны. Это означало запись `acceptEdits` и широкого `allow` в **глобальный** `~/.claude/` пользователя и приглашение «переместить файлы проекта», под которое мог попасть сам `~/.claude`. Теперь: на шаге 6, до первого файла, проверяется рабочая директория; если это домашняя папка или папка непустая — создаётся подпапка с названием проекта, и вся работа идёт в ней. Пользователю говорится одна фраза о том, где будет проект. Из `## Version control` убраны и перенос файлов, и оговорка про переписывание путей; там осталось простое правило: никогда не `git init` в домашней или родительской папке.
+
+- [x] **F3 (важно): права записываются до команд, которые они разрешают**
+
+В `## Generation` шаги 1 и 2 поменяны местами: сначала шаблоны (`CLAUDE.md`, шпаргалка, `.claude/settings.local.json`), потом каркас. Иначе `node --version` и `npm install` выполнялись без разрешающих правил и пользователь видел сырые запросы подтверждения. Порядок в `references/scaffolds.md` приведён в соответствие. В `allow` добавлены команды, которые скилл запускает сам для проверки своей работы: `Bash(node:*)`, `Bash(open:*)`, `Bash(start:*)`, `Bash(xdg-open:*)`. `Bash(npm install)` заменено на `Bash(npm install:*)` — точная форма не покрывает `npm install <пакет>`. Инструкция для каркаса «один файл» теперь называет обе убираемые строки поимённо.
+
+- [x] **F4 (важно): у зашитого блока прав появилась инструкция на пересверку**
+
+В `## Permissions` добавлено: перед записью файла сверить синтаксис `permissions` (ключи, значения `defaultMode`, форма правил) с актуальной документацией Claude Code; если изменился — следовать документации и сказать об этом в финальном отчёте. Шаблон остаётся значением по умолчанию.
+
+- [x] **F5 (важно): обещание про `deny` приведено к правде**
+
+`Bash()`-правило не ловит составные команды (`cd x && rm -rf y`), а форма `:*` не покрывает голую команду. Добавлены голые формы `Bash(rm)`, `Bash(git reset --hard)`, `Bash(git clean)`; формулировка смягчена — список ловит типовые случаи, но не является гарантией и не песочница.
+
+- [x] **F6 (важно): команда запуска зафиксирована**
+
+Для каркаса «настоящее приложение» в `CLAUDE.md` «Как запустить» и в шпаргалку всегда пишется `npm start` и только он. `dev` может быть в `package.json`, но пользователю не показывается. `references/templates.md` приведён в соответствие.
+
+- [x] **F10 (мелкое): финальный отчёт вынесен из `## Verification` в отдельный `## Final report`**
+
+`## Verification` вызывается в середине последовательности, а отчёт даётся последним — из-за этого файлы противоречили друг другу. Строка про `@financialpostpunk` переехала вместе с отчётом и по-прежнему встречается в `SKILL.md` ровно один раз. `## Final report` добавлен в список якорей в `scripts/check.py`.
+
+- [x] **F8 (мелкое): шаг 0 выведен из-под правила про «не знаю»**
+
+Исключение записано в самой формулировке правила в `## Interview rules`.
+
+- [x] **F9 (мелкое): подпись варианта на шаге 0 стала двуязычной**
+
+`Другой / Other`; текст вопроса шага 0 показывается по-русски и по-английски, потому что язык ещё не выбран.
+
+- [x] **Долги из журнала прогресса**
+
+Шпаргалка: в `references/templates.md` явно сказано, что все пять разделов присутствуют всегда — «Чего лучше не делать» нельзя молча выкинуть. Корневой `README.md`: в строках про шаг 1 (режим) и шаг 5 (способ запуска) добавлен вариант «не знаю, решите сами».
+
+- [x] **Ложное срабатывание ревью — не исправлять**
+
+Ревью требовало заменить `/vibeboarding` на `/vibeboarding:vibeboarding` в обоих README. Это неверно: по актуальной документации Claude Code голое имя скилла плагина тоже вызывает скилл, если это имя не занято другой командой. `vibeboarding` не занято. Оба README, строка 9 `SKILL.md` и проверка в `scripts/check.py` оставлены как есть.
+
+- [x] **Проверка**
+
+`python3 scripts/check.py` — код возврата 0. JSON прав извлечён из `references/templates.md` и разобран программно: валиден, `defaultMode: acceptEdits`, все правила в форме `Tool(pattern)`. `@financialpostpunk`: `SKILL.md` — 1, `references/templates.md` — 1, `references/scaffolds.md` — 0.

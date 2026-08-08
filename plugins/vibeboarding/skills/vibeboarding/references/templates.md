@@ -8,6 +8,7 @@ How to use this file:
 - The Russian text in the templates is reference wording, not literal output. Translate it into the Step 0 language, keeping the meaning, the tone and roughly the length. If Step 0 is Русский, use it as written.
 - `<angle brackets>` mark a placeholder you replace with the real value for this project. Never leave a placeholder, and never write the angle brackets into the generated file.
 - Fill every template from the interview answers. Do not ask the user anything more at this stage.
+- These three files are written first, before the project itself is built (`## Generation` step 1 in `SKILL.md`), so the scaffold does not exist on disk yet. Fill them from the plan the user confirmed at Step 6. After the build, check that every file name and every command in them matches what was actually created, and fix them if anything came out different.
 - `## Tone rules` from `SKILL.md` still applies to every word here: no jargon, short sentences, no raw error text.
 
 ## CLAUDE.md
@@ -30,7 +31,7 @@ Template:
 <One or two sentences, taken from the Step 2 answer: what this is and who it is for. Plain words, no technical terms.>
 
 ## Как запустить
-<The exact command, in a code block, or the literal instruction «Открыть файл <name>.html двойным кликом». Exactly one way to launch — the one chosen at Step 5.>
+<Exactly one way to launch — the one chosen at Step 5. Real-app shape: the command is always `npm start`, in a code block, and nothing else. Single-file shape: the literal instruction «Открыть файл <name>.html двойным кликом».>
 
 ## Где что лежит
 - `<file or folder>` — <what it is for, one line>
@@ -46,13 +47,15 @@ Template:
 Notes on the sections:
 
 - «О проекте» — reuse the user's own words from Step 2 where you can. Do not upgrade them into technical language.
-- «Как запустить» — one line for the single-file shape (double click), one command for the real-app shape. Write the command exactly as it must be typed.
-- «Где что лежит» — one line per file you actually created, in the order the user will care about. Do not list files that do not exist, and do not list every generated folder.
+- «Как запустить» — one line for the single-file shape (double click); for the real-app shape the one documented command is `npm start`, written exactly as it must be typed. `package.json` may also carry a `dev` script, but `dev` is never shown to the user, here or in the cheat sheet.
+- «Где что лежит» — one line per file this project will have, in the order the user will care about. The scaffold is built in the next step, so list what the confirmed plan says you are about to create — nothing speculative — and correct the list after the build if a name came out different. Do not list every generated folder.
 - «Правила» — three or four items, each one plain sentence. The four above are the default set; keep all four unless one is meaningless for this project. Add a project-specific rule only if the interview produced one (for example: «Файл с выпиской не менять — из него читаются данные»).
 
 ## Cheat sheet
 
 The cheat sheet is for the human, not for Claude. It is the file the user opens when they have forgotten how to start the project. Everything in it is literal and concrete: real file names, real commands, real phrases they can copy.
+
+All five sections below always appear, in this order, in every cheat sheet: «Что это за папка», «Как запустить», «Что говорить Клоду дальше», «Если что-то сломалось», «Чего лучше не делать». Never drop one for lack of material — this is the user's only lifeline document, and a missing section is a question they will have no answer to. If a section feels thin, use the default items in the notes below.
 
 File name depends on the Step 0 language, and the file goes in the project root:
 
@@ -69,7 +72,7 @@ Template:
 <One sentence: what lives here and what it does for the user.>
 
 ## Как запустить
-<Numbered steps, literal, no assumed knowledge. Single-file shape: «Откройте папку <folder>» / «Дважды кликните по файлу <name>.html» / «Откроется браузер — это и есть ваш проект». Real-app shape: the exact commands, one per step, each in a code block, plus what the user should see after each one.>
+<Numbered steps, literal, no assumed knowledge. Single-file shape: «Откройте папку <folder>» / «Дважды кликните по файлу <name>.html» / «Откроется браузер — это и есть ваш проект». Real-app shape: the launch command is `npm start` and only `npm start` — one step, in a code block, plus what the user should see after it.>
 
 ## Что говорить Клоду дальше
 Скопируйте любую строчку и вставьте в чат с Клодом:
@@ -99,6 +102,8 @@ Notes on the sections:
 
 Written to `.claude/settings.local.json` in the project root. Create the `.claude` folder if it is not there. This file is settings, not user-facing text: nothing in it is translated.
 
+Before you write the file, confirm the `permissions` syntax — the key names, the allowed `defaultMode` values, and the `Tool(pattern)` rule form — against the current Claude Code documentation; this part of the configuration drifts between releases. If it has changed, follow the documentation instead of the template below and say so in one plain sentence in the final report. Otherwise the template is the default and is written as is.
+
 Write exactly this, then extend `allow` with the project's real commands:
 
 ```json
@@ -106,8 +111,12 @@ Write exactly this, then extend `allow` with the project's real commands:
   "permissions": {
     "defaultMode": "acceptEdits",
     "allow": [
-      "Bash(npm install)",
+      "Bash(npm install:*)",
       "Bash(npm run:*)",
+      "Bash(node:*)",
+      "Bash(open:*)",
+      "Bash(start:*)",
+      "Bash(xdg-open:*)",
       "Bash(git init)",
       "Bash(git config:*)",
       "Bash(git status)",
@@ -117,8 +126,11 @@ Write exactly this, then extend `allow` with the project's real commands:
       "Bash(git commit:*)"
     ],
     "deny": [
+      "Bash(rm)",
       "Bash(rm:*)",
+      "Bash(git reset --hard)",
       "Bash(git reset --hard:*)",
+      "Bash(git clean)",
       "Bash(git clean:*)",
       "Bash(git push --force:*)",
       "Bash(git push -f:*)",
@@ -137,13 +149,13 @@ Write exactly this, then extend `allow` with the project's real commands:
 
 Why it is built this way (this explanation is for you, not for the user — never paste it into the project):
 
-- `deny` overrides `allow` in every mode, so the dangerous commands stay blocked even though the rest of the permissions are wide. That is what makes it safe to hand a non-programmer a permissive setup.
+- `deny` overrides `allow` in every mode, so the dangerous commands it names stay blocked even though the rest of the permissions are wide. It is a net, not a guarantee: a `Bash()` rule matches the command as written, so a compound line like `cd x && rm -rf y` is not caught by `Bash(rm:*)`, and a `:*` rule does not reliably cover the bare command — which is why the bare forms `Bash(rm)`, `Bash(git reset --hard)` and `Bash(git clean)` are listed alongside them. The list catches the common shapes and makes a permissive setup reasonable to hand a non-programmer; it is not a sandbox, so never tell the user that nothing can be deleted.
 - `"defaultMode": "acceptEdits"` lets Claude edit files and run ordinary file commands without stopping to ask, so the user is not asked to approve things they cannot judge.
 - `ask` keeps a confirmation on `git push`: publishing is the one action the user should knowingly agree to.
 
 Rules for adapting it:
 
-- Single-file shape (one self-contained HTML file, no `package.json`): remove the two `npm` lines from `allow`. Keep `deny` and `ask` unchanged.
-- Real-app shape (there is a `package.json`): keep the `npm` lines and add the project's own commands, for example `Bash(node:*)` if the user launches it with `node`. Add only commands this project actually uses.
-- Never remove or shorten the `deny` list, and never add keys or modes that are not in the template above.
+- Single-file shape (one self-contained HTML file, no `package.json`): remove the two `npm` lines — `"Bash(npm install:*)"` and `"Bash(npm run:*)"` — from `allow`. Keep everything else in `allow`, including `Bash(open:*)`, `Bash(start:*)` and `Bash(xdg-open:*)`: those are how the file gets opened for the launch check. Keep `deny` and `ask` unchanged.
+- Real-app shape (there is a `package.json`): keep the `npm` lines and add the project's own commands. Add only commands this project actually uses.
+- Never remove or shorten the `deny` list. Never add keys or modes beyond the template above, unless the documentation check at the top of this section says the syntax has changed — then follow the documentation.
 - Add `.claude/settings.local.json` to the project's `.gitignore`. Create `.gitignore` with that single line if the project does not have one — it is a local settings file and does not belong in a shared folder.

@@ -12,11 +12,13 @@ How to use this file:
 
 Order of operations, fixed:
 
-1. Build the shape — `## Single file` or `## Real app`.
-2. Write `CLAUDE.md`, the cheat sheet and `.claude/settings.local.json` from `references/templates.md`.
+1. Write `CLAUDE.md`, the cheat sheet and `.claude/settings.local.json` from `references/templates.md` — first, so the permissions are in place before anything below runs a command.
+2. Build the shape — `## Single file` or `## Real app`.
 3. `## Launch and verify` — the project must actually run.
 4. `## Version control` — only after the launch check has passed.
-5. Give the final report, per `SKILL.md`.
+5. Give the final report, per `## Final report` in `SKILL.md`.
+
+The folder to build in was already decided at `## Step 6` in `SKILL.md`, before the first file was written. Work in it and never move the project afterwards.
 
 ## Single file
 
@@ -25,8 +27,8 @@ Chosen at Step 5: «Файл, который открывается двойны
 **Shape.** One self-contained HTML file in the project root. Nothing else is needed to run it.
 
 - Name it in the user's language, after what the project actually does: `Мои расходы.html`, `Калькулятор кредита.html`. Spaces are fine — the user double-clicks the file and never types its name.
-- Use that exact name, character for character, in `CLAUDE.md` «Как запустить» and in the cheat sheet. Three different spellings of the file name is the most common way this shape breaks.
-- No `package.json`, no build step, no install step, nothing to run in a terminal. This is the «single-file shape» in `references/templates.md` → `## Permissions`: drop the two `npm` lines from `allow` and leave `deny` and `ask` exactly as written there.
+- Use that exact name, character for character, in `CLAUDE.md` «Как запустить» and in the cheat sheet. Three different spellings of the file name is the most common way this shape breaks. `CLAUDE.md` and the cheat sheet are written before this file exists, so settle on the name first and then use it unchanged; if it does change, go back and fix both.
+- No `package.json`, no build step, no install step, nothing to run in a terminal. This is the «single-file shape» in `references/templates.md` → `## Permissions`: drop the two `npm` lines — `"Bash(npm install:*)"` and `"Bash(npm run:*)"` — from `allow`, keep the rest of `allow`, and leave `deny` and `ask` exactly as written there.
 
 **Self-contained means offline.** Markup, styles and script all live inside that one file, in `<style>` and `<script>` tags.
 
@@ -59,8 +61,9 @@ Chosen at Step 5: «Настоящее приложение».
 
 - One `package.json` in the project root. Not a monorepo: no workspaces, no `packages/` folder, no second `package.json` anywhere.
 - `package.json` has the scripts `dev` and `start`.
-- The script names in `package.json`, in `CLAUDE.md` «Как запустить» and in the cheat sheet must match literally, character for character. If the cheat sheet says `npm run dev`, then `dev` is the key in `package.json`.
-- Exactly one way to launch. Pick it, document only it, and never write «или так, или так» — a second option is a second thing that can go wrong.
+- **The documented launch command is always `npm start`.** That is the one command written into `CLAUDE.md` «Как запустить» and into the cheat sheet, in every real-app project, with no exceptions. `dev` may exist in `package.json` for your own use, but it is never shown to the user and never named in a generated file.
+- So `start` in `package.json` must be the script that actually launches the finished project — not a placeholder, not an alias for a build step.
+- Exactly one way to launch. Document only `npm start` and never write «или так, или так» — a second option is a second thing that can go wrong.
 - As few outside libraries as possible. Prefer what Node already has built in. Every added library is something the user will one day have to reinstall.
 - Pick one fixed port and write the address literally — `http://localhost:3000`. Never let the port float between runs.
 
@@ -76,7 +79,7 @@ Mandatory for both shapes. The project is not finished until it has been launche
 
 1. Launch the result yourself. Never write "готово" without having run it.
 2. **Single file:** open it in the default browser — `open "<name>.html"` on macOS, `start "" "<name>.html"` on Windows, `xdg-open "<name>.html"` on Linux. Confirm the page renders and that the main action actually works: the number is calculated, the file loads, the entry is saved and is still there after a reload.
-3. **Real app:** install the dependencies, start the app with the one documented command, open the browser at its address, and confirm the page renders and the main action works.
+3. **Real app:** install the dependencies with `npm install`, start the app with `npm start` — the one documented command — open the browser at its address, and confirm the page renders and the main action works.
 4. **If it fails:** fix it and launch again — up to three attempts. Do not report the failure to the user unless it needs a decision only they can make, and then in plain language, never as a raw error message, stack trace or exit code.
 5. **After three failed attempts, stop.** Tell the user in plain language: what does not work, what already does work, and what you will try next. Never claim success, and never keep looping past three attempts.
 6. Only after a launch that worked: run `## Version control`, then report success and describe exactly what the user should see on screen.
@@ -93,9 +96,7 @@ Run this after the project files exist and after the launch check in `## Launch 
    git init
    ```
 
-   Only ever in the project root — never in a parent folder, and never in the user's home folder.
-
-   If the project root *is* the home folder — which happens when the user ran `/vibeboarding` in `~` — do not initialise there. First create a subfolder named after the project, in the user's language, move the project files into it, and run `git init` inside that subfolder. Everything after this point, and every path in `CLAUDE.md` and the cheat sheet, refers to that subfolder. Do not skip version control to avoid this case: skipping it hollows out the «верни, как было» promise the cheat sheet makes.
+   Only ever in the project folder chosen at `## Step 6` — never in a parent folder, and never in the user's home folder. `## Step 6` already guaranteed that folder is neither the home folder nor a folder full of the user's other things, so there is nothing to move and no path to rewrite here. Never skip version control: skipping it hollows out the «верни, как было» promise the cheat sheet makes.
 
 2. **Write `.gitignore`** in the project root. It must contain at least these two lines:
 
