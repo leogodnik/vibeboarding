@@ -307,7 +307,8 @@ disable-model-invocation: true
 1. Read `references/scaffolds.md` and build the project itself in the shape chosen at Step 5.
 2. Read `references/templates.md` and write `CLAUDE.md`, the human cheat sheet, and `.claude/settings.local.json`.
 3. Launch the result and verify it, per `## Verification`.
-4. Give the final report.
+4. Put the project under version control, per `## Version control` in `references/scaffolds.md`. Never skip this: the cheat sheet's «верни, как было» promise depends on it.
+5. Give the final report.
 
 Явно отметить: `references/*.md` читаются **только на этом этапе**, не во время интервью.
 
@@ -394,6 +395,8 @@ if (ROOT / templates_path).is_file():
     "allow": [
       "Bash(npm install)",
       "Bash(npm run:*)",
+      "Bash(git init)",
+      "Bash(git config:*)",
       "Bash(git status)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
@@ -488,6 +491,7 @@ check(templates_text.count("@financialpostpunk") == 1,
 
 **`## Version control`** — обязательный раздел, общий для обоих вариантов. Без него шпаргалка врёт: она советует «верни, как было до последних изменений», а права доступа разрешают `git add`/`git commit` — но откатывать будет нечего, если репозитория нет.
 - After the project files exist and the launch check has passed, run `git init` in the project root if the directory is not already a repository.
+- Never `git init` the user's home folder. If the project root IS the home folder, first create a subfolder named after the project, move the project files into it, and initialise there. Do not skip version control to avoid this case — skipping it re-hollows the «верни, как было» promise.
 - Write a `.gitignore` that at minimum contains `.claude/settings.local.json` and `.DS_Store`.
 - Make one initial commit containing everything, with a message in the user's language, e.g. «Первая рабочая версия».
 - Do not narrate any of this to the user and do not use the word «репозиторий» with them. In the cheat sheet, this is simply why «верни, как было» works.
