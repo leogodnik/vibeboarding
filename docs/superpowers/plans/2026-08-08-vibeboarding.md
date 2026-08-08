@@ -1,8 +1,8 @@
-# ВайбСтарт — план реализации
+# VIBEBOARDING — план реализации
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Собрать плагин Claude Code `vibestart`, который через короткое интервью на языке пользователя создаёт готовый к работе проект для человека без айти-бэкграунда.
+**Goal:** Собрать плагин Claude Code `vibeboarding`, который через короткое интервью на языке пользователя создаёт готовый к работе проект для человека без айти-бэкграунда.
 
 **Architecture:** Плагин-маркетплейс с одним плагином и одним скиллом. Продукт целиком состоит из markdown и JSON — исполняемого кода нет, кроме проверочного скрипта. Скилл разбит на три файла: `SKILL.md` (всегда в контексте: интервью, тон, порядок работы) и два справочника в `references/`, которые скилл читает только на этапе генерации, чтобы не занимать контекст во время разговора.
 
@@ -12,7 +12,7 @@
 
 Эти требования действуют во всех задачах.
 
-- Имена: маркетплейс `leogodnik-plugins`, плагин `vibestart`, скилл `vibestart`, команда вызова `/vibestart`.
+- Имена: маркетплейс `leogodnik-plugins`, плагин `vibeboarding`, скилл `vibeboarding`, команда вызова `/vibeboarding`.
 - Инструкции внутри `SKILL.md` и `references/*.md` пишутся **на английском**. Всё, что видит пользователь (вопросы, сводки, отчёты, созданные файлы), — на языке, выбранном на шаге 0.
 - В генерируемых проектах **не создавать**: git-хуков, docs-gate, структуры `docs/` с ADR, методологического слоя, монорепозитория, многопользовательской изоляции данных (RLS).
 - Синтаксис конфигов Claude Code проверен по документации 2026-08-08 и зафиксирован ниже. Значения использовать буквально:
@@ -23,20 +23,25 @@
   - `deny` перекрывает `allow` во всех режимах. Формат правила: `Tool(pattern)`, например `Bash(npm run test:*)`, `Read(./.env)`.
   - Файл локальных прав: `.claude/settings.local.json`, в `.gitignore`.
 - Имена маркетплейсов, зарезервированные Anthropic, использовать нельзя (`claude-plugins-official`, `anthropic-plugins`, `claude-for-financial-services` и т.п.). `leogodnik-plugins` под запрет не попадает.
+- **Телеграм-канал автора `@financialpostpunk`** упоминается ровно в трёх местах, каждый раз одной строкой и по делу, без рекламного тона:
+  1. Корневой `README.md` — строка в конце: канал, из которого вырос плагин.
+  2. Шпаргалка в сгенерированном проекте — в разделе «Если что-то сломалось»: куда написать, если Клод не справился.
+  3. Финальный отчёт скилла после генерации — последняя строка.
+  Больше нигде. В `CLAUDE.md` сгенерированного проекта, в `plugin.json` и в коде — не упоминать.
 - Каждая задача заканчивается зелёным `python3 scripts/check.py` и коммитом.
-- Рабочая директория: `/Users/leogodnik/Starter Skill/vibestart` (git-репозиторий уже создан, в нём один коммит со спецификацией).
+- Рабочая директория: `/Users/leogodnik/Starter Skill/vibeboarding` (git-репозиторий уже создан, в нём один коммит со спецификацией).
 
 ## Структура файлов
 
 | Файл | Ответственность |
 | :--- | :--- |
 | `scripts/check.py` | Структурная проверка: наличие файлов, валидность JSON, обязательные поля и разделы |
-| `.claude-plugin/marketplace.json` | Каталог маркетплейса: один плагин `vibestart` |
-| `plugins/vibestart/.claude-plugin/plugin.json` | Манифест плагина: метаданные |
-| `plugins/vibestart/skills/vibestart/SKILL.md` | Ядро: фронтматтер, языковая политика, тон, семь шагов интервью, порядок генерации, финальная проверка |
-| `plugins/vibestart/skills/vibestart/references/templates.md` | Шаблоны трёх создаваемых файлов: `CLAUDE.md`, шпаргалка для человека, `.claude/settings.local.json` |
-| `plugins/vibestart/skills/vibestart/references/scaffolds.md` | Два варианта каркаса проекта (один HTML-файл / настоящее приложение) и процедура запуска с проверкой |
-| `plugins/vibestart/README.md` | Документация плагина |
+| `.claude-plugin/marketplace.json` | Каталог маркетплейса: один плагин `vibeboarding` |
+| `plugins/vibeboarding/.claude-plugin/plugin.json` | Манифест плагина: метаданные |
+| `plugins/vibeboarding/skills/vibeboarding/SKILL.md` | Ядро: фронтматтер, языковая политика, тон, семь шагов интервью, порядок генерации, финальная проверка |
+| `plugins/vibeboarding/skills/vibeboarding/references/templates.md` | Шаблоны трёх создаваемых файлов: `CLAUDE.md`, шпаргалка для человека, `.claude/settings.local.json` |
+| `plugins/vibeboarding/skills/vibeboarding/references/scaffolds.md` | Два варианта каркаса проекта (один HTML-файл / настоящее приложение) и процедура запуска с проверкой |
+| `plugins/vibeboarding/README.md` | Документация плагина |
 | `README.md` | Документация репозитория: что это, как поставить |
 | `LICENSE` | MIT |
 | `.gitignore` | Служебные файлы |
@@ -48,7 +53,7 @@
 **Files:**
 - Create: `scripts/check.py`
 - Create: `.claude-plugin/marketplace.json`
-- Create: `plugins/vibestart/.claude-plugin/plugin.json`
+- Create: `plugins/vibeboarding/.claude-plugin/plugin.json`
 - Create: `LICENSE`
 - Create: `.gitignore`
 
@@ -61,7 +66,7 @@
 
 ```python
 #!/usr/bin/env python3
-"""Структурная проверка плагина ВайбСтарт. Запуск: python3 scripts/check.py"""
+"""Структурная проверка плагина VIBEBOARDING. Запуск: python3 scripts/check.py"""
 import json
 import pathlib
 import sys
@@ -89,7 +94,7 @@ def load_json(rel):
 
 REQUIRED_FILES = [
     ".claude-plugin/marketplace.json",
-    "plugins/vibestart/.claude-plugin/plugin.json",
+    "plugins/vibeboarding/.claude-plugin/plugin.json",
     "LICENSE",
     ".gitignore",
 ]
@@ -106,14 +111,14 @@ if marketplace is not None:
     check(isinstance(plugins, list) and len(plugins) == 1,
           "marketplace.json: ровно один плагин")
     if isinstance(plugins, list) and plugins:
-        check(plugins[0].get("name") == "vibestart",
-              "marketplace.json: плагин называется vibestart")
-        check(plugins[0].get("source") == "./plugins/vibestart",
-              "marketplace.json: source = ./plugins/vibestart")
+        check(plugins[0].get("name") == "vibeboarding",
+              "marketplace.json: плагин называется vibeboarding")
+        check(plugins[0].get("source") == "./plugins/vibeboarding",
+              "marketplace.json: source = ./plugins/vibeboarding")
 
-manifest = load_json("plugins/vibestart/.claude-plugin/plugin.json")
+manifest = load_json("plugins/vibeboarding/.claude-plugin/plugin.json")
 if manifest is not None:
-    check(manifest.get("name") == "vibestart", "plugin.json: name = vibestart")
+    check(manifest.get("name") == "vibeboarding", "plugin.json: name = vibeboarding")
     check(bool(manifest.get("description")), "plugin.json: есть description")
 
 print()
@@ -125,7 +130,7 @@ print("ВСЁ ХОРОШО")
 
 - [ ] **Step 2: Запустить проверку и убедиться, что она падает**
 
-Выполнить: `cd "/Users/leogodnik/Starter Skill/vibestart" && python3 scripts/check.py`
+Выполнить: `cd "/Users/leogodnik/Starter Skill/vibeboarding" && python3 scripts/check.py`
 Ожидается: строки `✖ есть файл .claude-plugin/marketplace.json` и остальные, в конце `ПРОВАЛЕНО: 4`, код возврата 1.
 
 - [ ] **Step 3: Создать `.claude-plugin/marketplace.json`**
@@ -138,22 +143,22 @@ print("ВСЁ ХОРОШО")
   "description": "Плагины Claude Code для курса «вайб-кодинг для финансистов».",
   "plugins": [
     {
-      "name": "vibestart",
-      "source": "./plugins/vibestart",
+      "name": "vibeboarding",
+      "source": "./plugins/vibeboarding",
       "version": "0.1.0",
-      "description": "ВайбСтарт — старт нового проекта для тех, кто не программист: короткое интервью на понятном языке, дальше всё делает Клод.",
+      "description": "VIBEBOARDING — старт нового проекта для тех, кто не программист: короткое интервью на понятном языке, дальше всё делает Клод.",
       "keywords": ["bootstrap", "beginners", "non-technical", "multilingual"]
     }
   ]
 }
 ```
 
-- [ ] **Step 4: Создать `plugins/vibestart/.claude-plugin/plugin.json`**
+- [ ] **Step 4: Создать `plugins/vibeboarding/.claude-plugin/plugin.json`**
 
 ```json
 {
-  "name": "vibestart",
-  "displayName": "ВайбСтарт",
+  "name": "vibeboarding",
+  "displayName": "VIBEBOARDING",
   "version": "0.1.0",
   "description": "Старт нового проекта для тех, кто не программист. Короткое интервью на языке пользователя — что вы хотите сделать, кто будет пользоваться, откуда данные — и Клод сам создаёт работающий проект, короткий CLAUDE.md, шпаргалку для человека и безопасные настройки прав.",
   "author": { "name": "Leonid Godnik" },
@@ -192,7 +197,7 @@ git commit -m "feat: каркас репозитория, манифесты и 
 ### Task 2: Ядро скилла — интервью
 
 **Files:**
-- Create: `plugins/vibestart/skills/vibestart/SKILL.md`
+- Create: `plugins/vibeboarding/skills/vibeboarding/SKILL.md`
 - Modify: `scripts/check.py` (добавить блок проверок SKILL.md перед итоговым `print()`)
 
 **Interfaces:**
@@ -206,15 +211,15 @@ git commit -m "feat: каркас репозитория, манифесты и 
 ```python
 import re
 
-skill_path = "plugins/vibestart/skills/vibestart/SKILL.md"
+skill_path = "plugins/vibeboarding/skills/vibeboarding/SKILL.md"
 check((ROOT / skill_path).is_file(), f"есть файл {skill_path}")
 if (ROOT / skill_path).is_file():
     text = (ROOT / skill_path).read_text(encoding="utf-8")
     matched = re.match(r"^---\n(.*?)\n---\n", text, re.S)
     check(bool(matched), "SKILL.md: есть YAML-фронтматтер")
     front = matched.group(1) if matched else ""
-    check(re.search(r"^name:\s*vibestart\s*$", front, re.M) is not None,
-          "SKILL.md: name = vibestart")
+    check(re.search(r"^name:\s*vibeboarding\s*$", front, re.M) is not None,
+          "SKILL.md: name = vibeboarding")
     check(re.search(r"^description:\s*\S", front, re.M) is not None,
           "SKILL.md: есть description")
     check(re.search(r"^disable-model-invocation:\s*true\s*$", front, re.M) is not None,
@@ -223,12 +228,14 @@ if (ROOT / skill_path).is_file():
                    "## Step 4", "## Step 5", "## Step 6",
                    "## Tone rules", "## Generation", "## Verification"]:
         check(anchor in text, f"SKILL.md: есть раздел «{anchor}»")
+    check(text.count("@financialpostpunk") == 1,
+          "SKILL.md: телеграм-канал упомянут ровно один раз")
 ```
 
 - [ ] **Step 2: Запустить проверку и убедиться, что она падает**
 
 Выполнить: `python3 scripts/check.py`
-Ожидается: `✖ есть файл plugins/vibestart/skills/vibestart/SKILL.md`, `ПРОВАЛЕНО: 1`, код возврата 1.
+Ожидается: `✖ есть файл plugins/vibeboarding/skills/vibeboarding/SKILL.md`, `ПРОВАЛЕНО: 1`, код возврата 1.
 
 - [ ] **Step 3: Написать `SKILL.md`**
 
@@ -236,8 +243,8 @@ if (ROOT / skill_path).is_file():
 
 ```yaml
 ---
-name: vibestart
-description: "Start a brand-new project for someone who is not a programmer. Asks a short, jargon-free interview in the user's own language — what they want to build, who will use it, where the data comes from, how they want to launch it — then builds a working project plus a short CLAUDE.md, a plain-language cheat sheet, and safe permission settings. Use ONLY when explicitly starting a new project from scratch; invoke manually with /vibestart."
+name: vibeboarding
+description: "Start a brand-new project for someone who is not a programmer. Asks a short, jargon-free interview in the user's own language — what they want to build, who will use it, where the data comes from, how they want to launch it — then builds a working project plus a short CLAUDE.md, a plain-language cheat sheet, and safe permission settings. Use ONLY when explicitly starting a new project from scratch; invoke manually with /vibeboarding."
 disable-model-invocation: true
 ---
 ```
@@ -307,6 +314,7 @@ disable-model-invocation: true
 - Real-app shape: install dependencies, start it, open the browser, confirm the page renders.
 - If it fails, fix it silently and launch again. Only report success after a successful launch.
 - Final report, in the user's language: what was built, where the files are, exactly how to launch it next time, exactly what to type to Claude to continue, and what to do if something breaks. Point at the cheat sheet file for the details.
+- Last line of the final report, exactly once, in the user's language and without a salesy tone: this plugin comes out of the Telegram channel `@financialpostpunk` — more on vibe coding for finance people there. Never repeat the channel anywhere else during the session.
 
 - [ ] **Step 4: Запустить проверку и убедиться, что она проходит**
 
@@ -316,7 +324,7 @@ disable-model-invocation: true
 - [ ] **Step 5: Коммит**
 
 ```bash
-git add scripts/check.py plugins/vibestart/skills/vibestart/SKILL.md
+git add scripts/check.py plugins/vibeboarding/skills/vibeboarding/SKILL.md
 git commit -m "feat: ядро скилла — интервью, тон и порядок генерации"
 ```
 
@@ -325,7 +333,7 @@ git commit -m "feat: ядро скилла — интервью, тон и по�
 ### Task 3: Справочник шаблонов
 
 **Files:**
-- Create: `plugins/vibestart/skills/vibestart/references/templates.md`
+- Create: `plugins/vibeboarding/skills/vibeboarding/references/templates.md`
 - Modify: `scripts/check.py` (добавить блок проверок перед финальным `print()`)
 
 **Interfaces:**
@@ -337,7 +345,7 @@ git commit -m "feat: ядро скилла — интервью, тон и по�
 Добавить в `scripts/check.py` перед финальным блоком `print()`:
 
 ```python
-templates_path = "plugins/vibestart/skills/vibestart/references/templates.md"
+templates_path = "plugins/vibeboarding/skills/vibeboarding/references/templates.md"
 check((ROOT / templates_path).is_file(), f"есть файл {templates_path}")
 if (ROOT / templates_path).is_file():
     templates = (ROOT / templates_path).read_text(encoding="utf-8")
@@ -345,12 +353,14 @@ if (ROOT / templates_path).is_file():
         check(anchor in templates, f"templates.md: есть раздел «{anchor}»")
     check("acceptEdits" in templates, "templates.md: режим прав acceptEdits")
     check('"deny"' in templates, "templates.md: есть список deny")
+    check("@financialpostpunk" in templates,
+          "templates.md: шпаргалка упоминает телеграм-канал")
 ```
 
 - [ ] **Step 2: Запустить проверку и убедиться, что она падает**
 
 Выполнить: `python3 scripts/check.py`
-Ожидается: `✖ есть файл plugins/vibestart/skills/vibestart/references/templates.md`, `ПРОВАЛЕНО: 1`, код возврата 1.
+Ожидается: `✖ есть файл plugins/vibeboarding/skills/vibeboarding/references/templates.md`, `ПРОВАЛЕНО: 1`, код возврата 1.
 
 - [ ] **Step 3: Написать `references/templates.md`**
 
@@ -368,7 +378,7 @@ if (ROOT / templates_path).is_file():
 - «Что это за папка» — одна фраза.
 - «Как запустить» — пошагово, буквально, с точными командами или «двойной клик по файлу X».
 - «Что говорить Клоду дальше» — три-пять готовых фраз, которые можно скопировать и вставить. Формулировки под конкретный проект, например: «Добавь на страницу график расходов по месяцам», «Сделай так, чтобы данные сохранялись после закрытия», «Поменяй цвета на более спокойные».
-- «Если что-то сломалось» — по шагам: 1) сказать Клоду «сломалось, вот что я делал: …»; 2) не удалять файлы самому; 3) как вернуть предыдущую рабочую версию через Клода.
+- «Если что-то сломалось» — по шагам: 1) сказать Клоду «сломалось, вот что я делал: …»; 2) не удалять файлы самому; 3) как вернуть предыдущую рабочую версию через Клода; 4) последней строкой раздела — одна фраза без рекламного тона: если Клод не справился, спросить в телеграм-канале `@financialpostpunk`.
 - «Чего лучше не делать» — два-три пункта, например: не переименовывать файлы вручную, не удалять папку `.claude`.
 
 **`## Permissions`** — шаблон `.claude/settings.local.json`. Записывать в проект буквально следующее, дополнив `allow` реальными командами проекта:
@@ -415,7 +425,7 @@ if (ROOT / templates_path).is_file():
 - [ ] **Step 5: Коммит**
 
 ```bash
-git add scripts/check.py plugins/vibestart/skills/vibestart/references/templates.md
+git add scripts/check.py plugins/vibeboarding/skills/vibeboarding/references/templates.md
 git commit -m "feat: справочник шаблонов CLAUDE.md, шпаргалки и прав доступа"
 ```
 
@@ -424,7 +434,7 @@ git commit -m "feat: справочник шаблонов CLAUDE.md, шпарг
 ### Task 4: Справочник каркасов
 
 **Files:**
-- Create: `plugins/vibestart/skills/vibestart/references/scaffolds.md`
+- Create: `plugins/vibeboarding/skills/vibeboarding/references/scaffolds.md`
 - Modify: `scripts/check.py` (добавить блок проверок перед финальным `print()`)
 
 **Interfaces:**
@@ -436,7 +446,7 @@ git commit -m "feat: справочник шаблонов CLAUDE.md, шпарг
 Добавить в `scripts/check.py` перед финальным блоком `print()`:
 
 ```python
-scaffolds_path = "plugins/vibestart/skills/vibestart/references/scaffolds.md"
+scaffolds_path = "plugins/vibeboarding/skills/vibeboarding/references/scaffolds.md"
 check((ROOT / scaffolds_path).is_file(), f"есть файл {scaffolds_path}")
 if (ROOT / scaffolds_path).is_file():
     scaffolds = (ROOT / scaffolds_path).read_text(encoding="utf-8")
@@ -447,7 +457,7 @@ if (ROOT / scaffolds_path).is_file():
 - [ ] **Step 2: Запустить проверку и убедиться, что она падает**
 
 Выполнить: `python3 scripts/check.py`
-Ожидается: `✖ есть файл plugins/vibestart/skills/vibestart/references/scaffolds.md`, `ПРОВАЛЕНО: 1`, код возврата 1.
+Ожидается: `✖ есть файл plugins/vibeboarding/skills/vibeboarding/references/scaffolds.md`, `ПРОВАЛЕНО: 1`, код возврата 1.
 
 - [ ] **Step 3: Написать `references/scaffolds.md`**
 
@@ -480,7 +490,7 @@ if (ROOT / scaffolds_path).is_file():
 - [ ] **Step 5: Коммит**
 
 ```bash
-git add scripts/check.py plugins/vibestart/skills/vibestart/references/scaffolds.md
+git add scripts/check.py plugins/vibeboarding/skills/vibeboarding/references/scaffolds.md
 git commit -m "feat: справочник каркасов проекта и процедура запуска"
 ```
 
@@ -490,7 +500,7 @@ git commit -m "feat: справочник каркасов проекта и п�
 
 **Files:**
 - Create: `README.md`
-- Create: `plugins/vibestart/README.md`
+- Create: `plugins/vibeboarding/README.md`
 - Modify: `scripts/check.py` (добавить блок проверок перед финальным `print()`)
 
 **Interfaces:**
@@ -502,22 +512,24 @@ git commit -m "feat: справочник каркасов проекта и п�
 Добавить в `scripts/check.py` перед финальным блоком `print()`:
 
 ```python
-for rel in ["README.md", "plugins/vibestart/README.md"]:
+for rel in ["README.md", "plugins/vibeboarding/README.md"]:
     check((ROOT / rel).is_file(), f"есть файл {rel}")
 root_readme = ROOT / "README.md"
 if root_readme.is_file():
     readme = root_readme.read_text(encoding="utf-8")
     check("/plugin marketplace add" in readme,
           "README.md: есть команда установки маркетплейса")
-    check("vibestart@leogodnik-plugins" in readme,
+    check("vibeboarding@leogodnik-plugins" in readme,
           "README.md: есть команда установки плагина")
-    check("/vibestart" in readme, "README.md: есть команда запуска")
+    check("/vibeboarding" in readme, "README.md: есть команда запуска")
+    check("@financialpostpunk" in readme,
+          "README.md: есть упоминание телеграм-канала")
 ```
 
 - [ ] **Step 2: Запустить проверку и убедиться, что она падает**
 
 Выполнить: `python3 scripts/check.py`
-Ожидается: `✖ есть файл README.md`, `✖ есть файл plugins/vibestart/README.md`, `ПРОВАЛЕНО: 2`, код возврата 1.
+Ожидается: `✖ есть файл README.md`, `✖ есть файл plugins/vibeboarding/README.md`, `ПРОВАЛЕНО: 2`, код возврата 1.
 
 - [ ] **Step 3: Написать корневой `README.md`**
 
@@ -527,19 +539,20 @@ if root_readme.is_file():
 - «Установка» — блок с тремя командами:
 
 ```
-/plugin marketplace add leogodnik/vibestart
-/plugin install vibestart@leogodnik-plugins
-/vibestart
+/plugin marketplace add leogodnik/vibeboarding
+/plugin install vibeboarding@leogodnik-plugins
+/vibeboarding
 ```
 
-  Первая строка предполагает, что репозиторий опубликован на GitHub как `leogodnik/vibestart`. Пока публикации нет — оставить эту строку как есть (README пишется для будущих пользователей), а локальную установку описать в Task 6.
+  Первая строка предполагает, что репозиторий опубликован на GitHub как `leogodnik/vibeboarding`. Пока публикации нет — оставить эту строку как есть (README пишется для будущих пользователей), а локальную установку описать в Task 6.
 
-  Под блоком — предупреждение: запускать `/vibestart` в **пустой папке**, потому что он делает проект с нуля.
+  Под блоком — предупреждение: запускать `/vibeboarding` в **пустой папке**, потому что он делает проект с нуля.
 - «Как это работает» — нумерованный список из шести шагов интервью, каждый одной строкой на человеческом языке.
 - «Что получится» — четыре пункта: работающий проект; `CLAUDE.md`; шпаргалка; безопасные настройки прав.
+- «Автор» — предпоследний раздел, две строки: плагин вырос из телеграм-канала `@financialpostpunk` про вайб-кодинг для финансистов; ссылка `https://t.me/financialpostpunk`. Без восклицательных знаков и без слова «подписывайтесь!» в рекламном тоне — просто указание, откуда это.
 - «Лицензия» — MIT.
 
-- [ ] **Step 4: Написать `plugins/vibestart/README.md`**
+- [ ] **Step 4: Написать `plugins/vibeboarding/README.md`**
 
 Короче корневого, без раздела установки маркетплейса. Что делает плагин, два режима интервью, что создаёт, ссылка на `../../LICENSE`.
 
@@ -551,7 +564,7 @@ if root_readme.is_file():
 - [ ] **Step 6: Коммит**
 
 ```bash
-git add scripts/check.py README.md plugins/vibestart/README.md
+git add scripts/check.py README.md plugins/vibeboarding/README.md
 git commit -m "docs: README репозитория и плагина"
 ```
 
@@ -560,9 +573,9 @@ git commit -m "docs: README репозитория и плагина"
 ### Task 6: Живой прогон и правки
 
 **Files:**
-- Modify: `plugins/vibestart/skills/vibestart/SKILL.md` (по результатам прогона)
-- Modify: `plugins/vibestart/skills/vibestart/references/templates.md` (по результатам прогона)
-- Modify: `plugins/vibestart/skills/vibestart/references/scaffolds.md` (по результатам прогона)
+- Modify: `plugins/vibeboarding/skills/vibeboarding/SKILL.md` (по результатам прогона)
+- Modify: `plugins/vibeboarding/skills/vibeboarding/references/templates.md` (по результатам прогона)
+- Modify: `plugins/vibeboarding/skills/vibeboarding/references/scaffolds.md` (по результатам прогона)
 
 **Interfaces:**
 - Consumes: весь плагин из задач 1–5.
@@ -571,18 +584,18 @@ git commit -m "docs: README репозитория и плагина"
 - [ ] **Step 1: Подготовить чистую площадку**
 
 ```bash
-rm -rf /tmp/vibestart-test && mkdir -p /tmp/vibestart-test && cd /tmp/vibestart-test && git status
+rm -rf /tmp/vibeboarding-test && mkdir -p /tmp/vibeboarding-test && cd /tmp/vibeboarding-test && git status
 ```
 
 Ожидается: `fatal: not a git repository` — папка чистая и пустая.
 
 - [ ] **Step 2: Поставить маркетплейс из локальной папки**
 
-В новой сессии Claude Code, запущенной в `/tmp/vibestart-test`, выполнить:
+В новой сессии Claude Code, запущенной в `/tmp/vibeboarding-test`, выполнить:
 
 ```
-/plugin marketplace add "/Users/leogodnik/Starter Skill/vibestart"
-/plugin install vibestart@leogodnik-plugins
+/plugin marketplace add "/Users/leogodnik/Starter Skill/vibeboarding"
+/plugin install vibeboarding@leogodnik-plugins
 ```
 
 Путь в кавычках обязателен — в нём есть пробел.
@@ -592,7 +605,7 @@ rm -rf /tmp/vibestart-test && mkdir -p /tmp/vibestart-test && cd /tmp/vibestart-
 - [ ] **Step 3: Проверить, что команда появилась**
 
 Ввести `/vibe` и посмотреть автодополнение.
-Ожидается: в списке есть `/vibestart:vibestart` (скиллы плагина именуются с префиксом плагина).
+Ожидается: в списке есть `/vibeboarding:vibeboarding` (скиллы плагина именуются с префиксом плагина).
 
 - [ ] **Step 4: Пройти интервью в режиме «Быстро»**
 
@@ -610,7 +623,7 @@ rm -rf /tmp/vibestart-test && mkdir -p /tmp/vibestart-test && cd /tmp/vibestart-
 
 - [ ] **Step 5: Пройти интервью в режиме «С объяснениями»**
 
-В новой чистой папке `/tmp/vibestart-test-2` повторить с режимом «С объяснениями», пользователи — «Я и коллеги», запуск — «Настоящее приложение».
+В новой чистой папке `/tmp/vibeboarding-test-2` повторить с режимом «С объяснениями», пользователи — «Я и коллеги», запуск — «Настоящее приложение».
 
 Контрольный список:
 - Технические решения сопровождались бытовыми аналогиями.
@@ -624,13 +637,13 @@ rm -rf /tmp/vibestart-test && mkdir -p /tmp/vibestart-test && cd /tmp/vibestart-
 
 - [ ] **Step 7: Прогнать структурную проверку**
 
-Выполнить: `cd "/Users/leogodnik/Starter Skill/vibestart" && python3 scripts/check.py`
+Выполнить: `cd "/Users/leogodnik/Starter Skill/vibeboarding" && python3 scripts/check.py`
 Ожидается: все строки с `✓`, `ВСЁ ХОРОШО`, код возврата 0.
 
 - [ ] **Step 8: Убрать площадки и закоммитить**
 
 ```bash
-rm -rf /tmp/vibestart-test /tmp/vibestart-test-2
-git add plugins/vibestart/skills/vibestart
+rm -rf /tmp/vibeboarding-test /tmp/vibeboarding-test-2
+git add plugins/vibeboarding/skills/vibeboarding
 git commit -m "fix: правки скилла по результатам живого прогона"
 ```
