@@ -86,6 +86,20 @@ if (ROOT / templates_path).is_file():
     check("@financialpostpunk" in templates,
           "templates.md: шпаргалка упоминает телеграм-канал")
 
+scaffolds_path = "plugins/vibeboarding/skills/vibeboarding/references/scaffolds.md"
+check((ROOT / scaffolds_path).is_file(), f"есть файл {scaffolds_path}")
+if (ROOT / scaffolds_path).is_file():
+    scaffolds = (ROOT / scaffolds_path).read_text(encoding="utf-8")
+    for anchor in ["## Single file", "## Real app", "## Version control",
+                   "## Launch and verify"]:
+        check(anchor in scaffolds, f"scaffolds.md: есть раздел «{anchor}»")
+    check("git init" in scaffolds, "scaffolds.md: каркас создаёт git-репозиторий")
+
+templates_text = (ROOT / templates_path).read_text(encoding="utf-8") \
+    if (ROOT / templates_path).is_file() else ""
+check(templates_text.count("@financialpostpunk") == 1,
+      "templates.md: телеграм-канал упомянут ровно один раз")
+
 print()
 if errors:
     print(f"ПРОВАЛЕНО: {len(errors)}")
