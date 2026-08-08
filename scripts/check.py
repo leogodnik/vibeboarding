@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Структурная проверка плагина ВайбСтарт. Запуск: python3 scripts/check.py"""
+"""Структурная проверка плагина VIBEBOARDING. Запуск: python3 scripts/check.py"""
 import json
 import pathlib
 import sys
@@ -27,7 +27,7 @@ def load_json(rel):
 
 REQUIRED_FILES = [
     ".claude-plugin/marketplace.json",
-    "plugins/vibestart/.claude-plugin/plugin.json",
+    "plugins/vibeboarding/.claude-plugin/plugin.json",
     "LICENSE",
     ".gitignore",
 ]
@@ -44,14 +44,14 @@ if marketplace is not None:
     check(isinstance(plugins, list) and len(plugins) == 1,
           "marketplace.json: ровно один плагин")
     if isinstance(plugins, list) and plugins:
-        check(plugins[0].get("name") == "vibestart",
-              "marketplace.json: плагин называется vibestart")
-        check(plugins[0].get("source") == "./plugins/vibestart",
-              "marketplace.json: source = ./plugins/vibestart")
+        check(plugins[0].get("name") == "vibeboarding",
+              "marketplace.json: плагин называется vibeboarding")
+        check(plugins[0].get("source") == "./plugins/vibeboarding",
+              "marketplace.json: source = ./plugins/vibeboarding")
 
-manifest = load_json("plugins/vibestart/.claude-plugin/plugin.json")
+manifest = load_json("plugins/vibeboarding/.claude-plugin/plugin.json")
 if manifest is not None:
-    check(manifest.get("name") == "vibestart", "plugin.json: name = vibestart")
+    check(manifest.get("name") == "vibeboarding", "plugin.json: name = vibeboarding")
     check(bool(manifest.get("description")), "plugin.json: есть description")
 
 print()
