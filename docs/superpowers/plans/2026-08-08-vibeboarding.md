@@ -443,7 +443,7 @@ git commit -m "feat: справочник шаблонов CLAUDE.md, шпарг
 
 **Interfaces:**
 - Consumes: `check()`, `ROOT` из `scripts/check.py`; выбор пользователя на шаге 5 интервью (Task 2).
-- Produces: два каркаса с якорями `## Single file` и `## Real app`, плюс `## Launch and verify`.
+- Produces: два каркаса с якорями `## Single file` и `## Real app`, плюс `## Version control` и `## Launch and verify`.
 
 - [ ] **Step 1: Написать падающую проверку**
 
@@ -454,8 +454,15 @@ scaffolds_path = "plugins/vibeboarding/skills/vibeboarding/references/scaffolds.
 check((ROOT / scaffolds_path).is_file(), f"есть файл {scaffolds_path}")
 if (ROOT / scaffolds_path).is_file():
     scaffolds = (ROOT / scaffolds_path).read_text(encoding="utf-8")
-    for anchor in ["## Single file", "## Real app", "## Launch and verify"]:
+    for anchor in ["## Single file", "## Real app", "## Version control",
+                   "## Launch and verify"]:
         check(anchor in scaffolds, f"scaffolds.md: есть раздел «{anchor}»")
+    check("git init" in scaffolds, "scaffolds.md: каркас создаёт git-репозиторий")
+
+templates_text = (ROOT / templates_path).read_text(encoding="utf-8") \
+    if (ROOT / templates_path).is_file() else ""
+check(templates_text.count("@financialpostpunk") == 1,
+      "templates.md: телеграм-канал упомянут ровно один раз")
 ```
 
 - [ ] **Step 2: Запустить проверку и убедиться, что она падает**
@@ -478,6 +485,13 @@ if (ROOT / scaffolds_path).is_file():
 - Хранение данных — самое простое, что закрывает задачу; полноценную базу поднимать, только если без неё никак, и в этом случае Клод поднимает её сам и проверяет, что она работает.
 - Перед началом проверить, установлен ли Node.js (`node --version`). Если нет — не вываливать инструкцию по установке, а объяснить одной фразой, что нужно установить, дать прямую ссылку и предложить пока сделать вариант «один файл», чтобы человек сразу увидел результат.
 - Имена скриптов в `package.json` и в разделе «Как запустить» шпаргалки должны совпадать буквально.
+
+**`## Version control`** — обязательный раздел, общий для обоих вариантов. Без него шпаргалка врёт: она советует «верни, как было до последних изменений», а права доступа разрешают `git add`/`git commit` — но откатывать будет нечего, если репозитория нет.
+- After the project files exist and the launch check has passed, run `git init` in the project root if the directory is not already a repository.
+- Write a `.gitignore` that at minimum contains `.claude/settings.local.json` and `.DS_Store`.
+- Make one initial commit containing everything, with a message in the user's language, e.g. «Первая рабочая версия».
+- Do not narrate any of this to the user and do not use the word «репозиторий» with them. In the cheat sheet, this is simply why «верни, как было» works.
+- Never run `git push`, never ask about GitHub, never set up a remote. This is purely a local safety net.
 
 **`## Launch and verify`** — общая процедура, обязательная в обоих вариантах:
 1. Launch the result.
