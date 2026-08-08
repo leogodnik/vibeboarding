@@ -1,0 +1,9 @@
+{
+  "name": "vibestart",
+  "displayName": "ВайбСтарт",
+  "version": "0.1.0",
+  "description": "Старт нового проекта для тех, кто не программист. Короткое интервью на языке пользователя — что вы хотите сделать, кто будет пользоваться, откуда данные — и Клод сам создаёт работающий проект, короткий CLAUDE.md, шпаргалку для человека и безопасные настройки прав.",
+  "author": { "name": "Leonid Godnik" },
+  "license": "MIT",
+  "keywords": ["bootstrap", "beginners", "non-technical", "multilingual", "vibe-coding"]
+}

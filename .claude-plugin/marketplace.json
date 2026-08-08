@@ -1,0 +1,15 @@
+{
+  "name": "leogodnik-plugins",
+  "owner": { "name": "Leonid Godnik" },
+  "version": "1.0.0",
+  "description": "Плагины Claude Code для курса «вайб-кодинг для финансистов».",
+  "plugins": [
+    {
+      "name": "vibestart",
+      "source": "./plugins/vibestart",
+      "version": "0.1.0",
+      "description": "ВайбСтарт — старт нового проекта для тех, кто не программист: короткое интервью на понятном языке, дальше всё делает Клод.",
+      "keywords": ["bootstrap", "beginners", "non-technical", "multilingual"]
+    }
+  ]
+}
