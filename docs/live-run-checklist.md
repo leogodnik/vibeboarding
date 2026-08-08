@@ -9,23 +9,36 @@
 rm -rf /tmp/vb-test && mkdir -p /tmp/vb-test
 ```
 
-Затем в новой сессии Claude Code, запущенной в `/tmp/vb-test`:
+Локальная установка **не работает, если в пути есть пробел** — а рабочая папка проекта лежит
+в `Starter Skill`. Поэтому для прогона нужна копия по короткому пути:
+
+```bash
+rm -rf /tmp/vibeboarding-mkt
+git clone --branch feat/vibeboarding-plugin "/Users/leogodnik/Starter Skill/vibeboarding" /tmp/vibeboarding-mkt
+```
+
+Затем в новой сессии Claude Code, запущенной в `/tmp/vb-test`, набрать команду вместе с путём
+одной строкой и без кавычек — иначе откроется диалог, и путь уйдёт в чат обычным сообщением:
 
 ```
-/plugin marketplace add "/Users/leogodnik/Starter Skill/vibeboarding"
+/plugin marketplace add /tmp/vibeboarding-mkt
 /plugin install vibeboarding@leogodnik-plugins
 ```
 
 Если в отчёте об установке будет `Run /reload-plugins to activate.` — выполнить `/reload-plugins`.
 Потом запустить `/vibeboarding`.
 
+Проверить, что маркетплейс действительно зарегистрирован, можно по файлу
+`~/.claude/plugins/known_marketplaces.json` — в нём должен появиться `leogodnik-plugins`.
+
 Прогонов нужно два: один в режиме «Быстро» с ответами «только я» и «файл двойным кликом»,
 второй в режиме «С объяснениями» с ответами «я и коллеги» и «настоящее приложение».
 
 ## Семь наблюдений
 
-1. **Команда вообще появляется?** Набрать `/vibe` и посмотреть автодополнение. Ожидается
-   `/vibeboarding`. Если работает только `/vibeboarding:vibeboarding` — поправить оба README.
+1. ~~**Команда вообще появляется?**~~ **Проверено 2026-08-09: да.** Автодополнение показывает
+   длинную форму `/vibeboarding:vibeboarding`, но короткое `/vibeboarding`, набранное целиком,
+   запускает скилл. README оставлен как был, добавлена сноска про длинную форму в подсказке.
 
 2. **Сколько раз система спросила разрешение во время генерации?** Правильный ответ — ноль.
    Любой запрос разрешения, показанный человеку, обесценивает всю идею плагина. Смотреть
