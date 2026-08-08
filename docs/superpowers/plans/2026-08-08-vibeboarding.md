@@ -244,7 +244,7 @@ if (ROOT / skill_path).is_file():
 ```yaml
 ---
 name: vibeboarding
-description: "Start a brand-new project for someone who is not a programmer. Asks a short, jargon-free interview in the user's own language — what they want to build, who will use it, where the data comes from, how they want to launch it — then builds a working project plus a short CLAUDE.md, a plain-language cheat sheet, and safe permission settings. Use ONLY when explicitly starting a new project from scratch; invoke manually with /vibeboarding."
+description: "Start a brand-new project for someone who is not a programmer. Asks a short, jargon-free interview in the user's own language — what they want to build, who will use it, where the data comes from, how they want to launch it — then builds a working project plus a short CLAUDE.md, a plain-language cheat sheet, and safe permission settings. Use ONLY when explicitly starting a new project from scratch; invoke manually with /vibeboarding (plugin skills resolve as /vibeboarding:vibeboarding)."
 disable-model-invocation: true
 ---
 ```
@@ -262,11 +262,12 @@ disable-model-invocation: true
 - Never ask about anything the user would have to look up. Derive technical decisions from the plain-language answers instead.
 - Adapt: if an answer makes a later question pointless, skip it.
 
-**`## Step 0. Language`** — отдельный ход, виджет выбора, без свободного текста. Варианты: `Русский · English · 中文 (简体) · Español · Deutsch · Français · Другой (свободный текст)`. Весь дальнейший разговор и все созданные файлы — на этом языке.
+**`## Step 0. Language`** — отдельный ход, виджет выбора, без свободного текста. Ровно четыре варианта, потому что виджет принимает от двух до четырёх: `Русский · English · 中文 (简体) · Другой (назовите язык)`. Если выбран «Другой» — следующим ходом принять название языка свободным текстом. Весь дальнейший разговор и все созданные файлы — на выбранном языке.
 
-**`## Step 1. Mode`** — виджет выбора из двух вариантов. Формулировки для пользователя (перевести на язык шага 0):
+**`## Step 1. Mode`** — виджет выбора из трёх вариантов. Формулировки для пользователя (перевести на язык шага 0):
 - «Быстро» — «Я сам подберу технику и просто скажу одной фразой, что сделаю. Меньше вопросов, быстрее результат.»
 - «С объяснениями» — «Каждый технический выбор объясню бытовой аналогией, чтобы вы понимали, что происходит. Дольше, но вы научитесь.»
+- «Не знаю — решите сами» — взять «С объяснениями», назвать этот выбор одной фразой и идти дальше.
 
 В режиме «С объяснениями» перед каждым техническим решением давать одну короткую аналогию. Образец, на который нужно равняться: «база данных — это как Excel-файл, только несколько человек могут писать в него одновременно и он не ломается». В режиме «Быстро» аналогии не давать, решение сообщать одной фразой.
 
@@ -285,9 +286,10 @@ disable-model-invocation: true
 **`## Step 4. Where the data comes from`** — виджет выбора: «Ввожу руками» / «У меня есть файл Excel или CSV» / «Надо забирать из другой системы» / «Пока не знаю».
 Если выбран файл — попросить (следующим, отдельным ходом) положить пример файла в папку проекта или описать словами, какие в нём столбцы. Если «из другой системы» — спросить одним свободным вопросом, из какой именно, и предупредить, что для этого может понадобиться доступ, которого сейчас нет; предложить на первом шаге работать с файлом-выгрузкой.
 
-**`## Step 5. How do you want to launch it`** — виджет выбора из двух вариантов, с честным объяснением:
+**`## Step 5. How do you want to launch it`** — виджет выбора из трёх вариантов, с честным объяснением:
 - «Файл, который открывается двойным кликом» — «Ничего устанавливать не надо. Открывается в браузере как обычная страница. Подходит для калькуляторов, дашбордов и таблиц.»
 - «Настоящее приложение» — «Возможностей больше: данные сохраняются между запусками, могут работать несколько человек. Но понадобится установить дополнительные программы, и запускать его нужно будет командой — я покажу как.»
+- «Не знаю — решите сами» — взять «файл двойным кликом», кроме случая, когда срабатывает правило конфликта ниже: тогда взять «настоящее приложение». Назвать выбор одной фразой и идти дальше.
 
 Если ответ шага 3 «внешние люди» или ответ шага 4 «из другой системы», а здесь выбран «файл двойным кликом» — назвать конфликт одной фразой и предложить «настоящее приложение», но решить так, как хочет пользователь.
 
@@ -295,6 +297,7 @@ disable-model-invocation: true
 
 **`## Tone rules`** — действуют на каждом ходу:
 - No jargon. If a technical word is unavoidable, explain it in the same sentence.
+- Banned words, in every turn and in the final report, not just at Step 3: «авторизация», «деплой», «фронтенд», «бэкенд», «репозиторий», «зависимости». Say what they mean instead: «вход по паролю», «выложить в интернет», «то, что видно на экране», «то, что считает внутри», «папка с проектом», «дополнительные программы».
 - Never show a raw error message, stack trace, or exit code to the user. Say what happened in plain language, say you are fixing it, then fix it.
 - Never blame the user for an unclear answer.
 - Short messages. No walls of text.
@@ -312,7 +315,8 @@ disable-model-invocation: true
 - Actually launch the result. Do not write "done" without launching.
 - Single-file shape: open the HTML file in the browser and confirm the page renders and the main action works.
 - Real-app shape: install dependencies, start it, open the browser, confirm the page renders.
-- If it fails, fix it silently and launch again. Only report success after a successful launch.
+- If it fails, fix it and launch again — up to three attempts, without showing the user the raw error.
+- If three attempts fail, stop and tell the user in plain language: what does not work, what already does work, what you will try next, and what they can do (usually: nothing, keep talking to Claude). Never claim success, and never loop silently past three attempts.
 - Final report, in the user's language: what was built, where the files are, exactly how to launch it next time, exactly what to type to Claude to continue, and what to do if something breaks. Point at the cheat sheet file for the details.
 - Last line of the final report, exactly once, in the user's language and without a salesy tone: this plugin comes out of the Telegram channel `@financialpostpunk` — more on vibe coding for finance people there. Never repeat the channel anywhere else during the session.
 
@@ -479,8 +483,9 @@ if (ROOT / scaffolds_path).is_file():
 1. Launch the result.
 2. Single file: open it in the default browser (`open` on macOS, `start` on Windows, `xdg-open` on Linux) and confirm the page renders and the main action works.
 3. Real app: install dependencies, start the app, open the browser at its address, confirm the page renders.
-4. On failure: fix it and launch again. Do not report the failure to the user unless it needs their decision — and then in plain language, never as a raw error.
-5. Only after a successful launch, report success and show what the user should see.
+4. On failure: fix it and launch again, up to three attempts. Do not report the failure to the user unless it needs their decision — and then in plain language, never as a raw error.
+5. After three failed attempts, stop: say in plain language what does not work, what already works, and what you will try next. Never claim success and never loop past three attempts.
+6. Only after a successful launch, report success and show what the user should see.
 
 - [ ] **Step 4: Запустить проверку и убедиться, что она проходит**
 
