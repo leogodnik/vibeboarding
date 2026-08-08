@@ -100,6 +100,19 @@ templates_text = (ROOT / templates_path).read_text(encoding="utf-8") \
 check(templates_text.count("@financialpostpunk") == 1,
       "templates.md: телеграм-канал упомянут ровно один раз")
 
+for rel in ["README.md", "plugins/vibeboarding/README.md"]:
+    check((ROOT / rel).is_file(), f"есть файл {rel}")
+root_readme = ROOT / "README.md"
+if root_readme.is_file():
+    readme = root_readme.read_text(encoding="utf-8")
+    check("/plugin marketplace add" in readme,
+          "README.md: есть команда установки маркетплейса")
+    check("vibeboarding@leogodnik-plugins" in readme,
+          "README.md: есть команда установки плагина")
+    check("/vibeboarding" in readme, "README.md: есть команда запуска")
+    check("@financialpostpunk" in readme,
+          "README.md: есть упоминание телеграм-канала")
+
 print()
 if errors:
     print(f"ПРОВАЛЕНО: {len(errors)}")
