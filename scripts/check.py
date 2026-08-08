@@ -75,6 +75,17 @@ if (ROOT / skill_path).is_file():
     check(text.count("@financialpostpunk") == 1,
           "SKILL.md: телеграм-канал упомянут ровно один раз")
 
+templates_path = "plugins/vibeboarding/skills/vibeboarding/references/templates.md"
+check((ROOT / templates_path).is_file(), f"есть файл {templates_path}")
+if (ROOT / templates_path).is_file():
+    templates = (ROOT / templates_path).read_text(encoding="utf-8")
+    for anchor in ["## CLAUDE.md", "## Cheat sheet", "## Permissions"]:
+        check(anchor in templates, f"templates.md: есть раздел «{anchor}»")
+    check("acceptEdits" in templates, "templates.md: режим прав acceptEdits")
+    check('"deny"' in templates, "templates.md: есть список deny")
+    check("@financialpostpunk" in templates,
+          "templates.md: шпаргалка упоминает телеграм-канал")
+
 print()
 if errors:
     print(f"ПРОВАЛЕНО: {len(errors)}")
