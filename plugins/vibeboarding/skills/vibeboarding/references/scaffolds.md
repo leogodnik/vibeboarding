@@ -42,7 +42,7 @@ Chosen at Step 5: «Файл, который открывается двойны
 **A file from Step 4.** If the user has an Excel or CSV file:
 
 - Put a file-choosing button on the page itself, read the file with `FileReader` in the browser, parse it in the page. No server, no upload, the file never leaves the computer.
-- CSV is read directly. A `.xlsx` file cannot be parsed without an outside library, and outside libraries are banned in this shape — so either tell the user in one plain sentence to save the file as CSV first (and put that as a step in the cheat sheet's «Как запустить»), or, if it has to stay `.xlsx`, say in one sentence that this is a reason to build `## Real app` instead and let the user decide.
+- CSV is read directly. A `.xlsx` file cannot be parsed without an outside library, and outside libraries are banned in this shape — so build the page to read CSV, and add one step to the cheat sheet's «Как запустить» telling the user in plain words to save their Excel file as CSV first («Файл → Сохранить как → CSV»). Take this branch without stopping to ask: `## Generation` promises one pass with no pauses for approval. Mention in the final report, in one sentence, that Excel files need that one save-as step — and if the user would rather not have it, they can ask for the «настоящее приложение» version later.
 
 **Interface.** Large readable font. Plain labels in the Step 0 language — never leave English words on screen when the language is not English. Works on a narrow phone screen: a `<meta name="viewport">` tag, no fixed pixel widths, nothing cut off at the edge.
 
@@ -93,11 +93,13 @@ Run this after the project files exist and after the launch check in `## Launch 
    git init
    ```
 
-   Only ever in the project root — never in a parent folder, never in the user's home folder.
+   Only ever in the project root — never in a parent folder, and never in the user's home folder.
+
+   If the project root *is* the home folder — which happens when the user ran `/vibeboarding` in `~` — do not initialise there. First create a subfolder named after the project, in the user's language, move the project files into it, and run `git init` inside that subfolder. Everything after this point, and every path in `CLAUDE.md` and the cheat sheet, refers to that subfolder. Do not skip version control to avoid this case: skipping it hollows out the «верни, как было» promise the cheat sheet makes.
 
 2. **Write `.gitignore`** in the project root. It must contain at least these two lines:
 
-   ```
+   ```gitignore
    .claude/settings.local.json
    .DS_Store
    ```

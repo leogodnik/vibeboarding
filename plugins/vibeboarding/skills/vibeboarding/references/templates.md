@@ -108,6 +108,8 @@ Write exactly this, then extend `allow` with the project's real commands:
     "allow": [
       "Bash(npm install)",
       "Bash(npm run:*)",
+      "Bash(git init)",
+      "Bash(git config:*)",
       "Bash(git status)",
       "Bash(git diff:*)",
       "Bash(git log:*)",

@@ -113,7 +113,8 @@ Only after confirmation at Step 6. Fixed order, done in one pass, with no pauses
 1. Read `references/scaffolds.md` and build the project itself in the shape chosen at Step 5.
 2. Read `references/templates.md` and write `CLAUDE.md`, the human cheat sheet, and `.claude/settings.local.json`.
 3. Launch the result and verify it, per `## Verification`.
-4. Give the final report.
+4. Put the project under version control, per `## Version control` in `references/scaffolds.md`. Never skip this: the cheat sheet's «верни, как было» promise depends on it.
+5. Give the final report.
 
 Both files live in `references/` next to this one. Read them only at this stage — never during the interview.
 
