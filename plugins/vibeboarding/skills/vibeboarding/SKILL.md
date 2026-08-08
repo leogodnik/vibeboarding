@@ -120,9 +120,10 @@ Only after confirmation at Step 6. Fixed order, done in one pass, with no pauses
 
 1. Read `references/templates.md` and write `CLAUDE.md`, the human cheat sheet, and `.claude/settings.local.json`. Permissions come first on purpose: they must already be in place before the build runs any command, or the user is stopped by raw approval prompts in the middle of the work, which is exactly what `## Tone rules` forbids.
 2. Read `references/scaffolds.md` and build the project itself in the shape chosen at Step 5.
-3. Launch the result and verify it, per `## Verification`.
-4. Put the project under version control, per `## Version control` in `references/scaffolds.md`. Never skip this: the cheat sheet's «верни, как было» promise depends on it.
-5. Give the final report, per `## Final report`.
+3. Reconcile the three written files with what was actually built. This step always runs — it is not a check you perform only when you suspect something changed. Re-open `CLAUDE.md`, the cheat sheet and `.claude/settings.local.json`, and compare, line by line, against what is now on disk and against the shape that actually got built: every file name, every command, every path, and every line in `allow`. Fix every mismatch in the written file, not in the project. The shape can change mid-run — the real-app build finds no Node.js and the user accepts the single-file version instead — and then all three files are wrong: the documented launch command has to become the double-click instruction, and the `npm` lines have to come out of `allow`. Do not launch anything until this is done.
+4. Launch the result and verify it, per `## Verification`.
+5. Put the project under version control, per `## Version control` in `references/scaffolds.md`. Never skip this: the cheat sheet's «верни, как было» promise depends on it.
+6. Give the final report, per `## Final report`.
 
 Both files live in `references/` next to this one. Read them only at this stage — never during the interview.
 

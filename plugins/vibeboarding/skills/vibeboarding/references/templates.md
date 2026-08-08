@@ -8,7 +8,7 @@ How to use this file:
 - The Russian text in the templates is reference wording, not literal output. Translate it into the Step 0 language, keeping the meaning, the tone and roughly the length. If Step 0 is Русский, use it as written.
 - `<angle brackets>` mark a placeholder you replace with the real value for this project. Never leave a placeholder, and never write the angle brackets into the generated file.
 - Fill every template from the interview answers. Do not ask the user anything more at this stage.
-- These three files are written first, before the project itself is built (`## Generation` step 1 in `SKILL.md`), so the scaffold does not exist on disk yet. Fill them from the plan the user confirmed at Step 6. After the build, check that every file name and every command in them matches what was actually created, and fix them if anything came out different.
+- These three files are written first, before the project itself is built (`## Generation` step 1 in `SKILL.md`), so the scaffold does not exist on disk yet. Fill them from the plan the user confirmed at Step 6. They are then reconciled with reality by a mandatory step that always runs after the build — `## Generation` step 3, spelled out as step 1 of `## Launch and verify` in `references/scaffolds.md`. Write your best version here; that step is what guarantees it ends up true.
 - `## Tone rules` from `SKILL.md` still applies to every word here: no jargon, short sentences, no raw error text.
 
 ## CLAUDE.md
@@ -48,7 +48,7 @@ Notes on the sections:
 
 - «О проекте» — reuse the user's own words from Step 2 where you can. Do not upgrade them into technical language.
 - «Как запустить» — one line for the single-file shape (double click); for the real-app shape the one documented command is `npm start`, written exactly as it must be typed. `package.json` may also carry a `dev` script, but `dev` is never shown to the user, here or in the cheat sheet.
-- «Где что лежит» — one line per file this project will have, in the order the user will care about. The scaffold is built in the next step, so list what the confirmed plan says you are about to create — nothing speculative — and correct the list after the build if a name came out different. Do not list every generated folder.
+- «Где что лежит» — one line per file this project will have, in the order the user will care about. The scaffold is built in the next step, so list what the confirmed plan says you are about to create — nothing speculative. The mandatory reconciliation step after the build (`## Launch and verify`, step 1) corrects this list against the files that really exist. Do not list every generated folder.
 - «Правила» — three or four items, each one plain sentence. The four above are the default set; keep all four unless one is meaningless for this project. Add a project-specific rule only if the interview produced one (for example: «Файл с выпиской не менять — из него читаются данные»).
 
 ## Cheat sheet

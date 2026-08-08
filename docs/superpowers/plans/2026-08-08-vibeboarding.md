@@ -310,9 +310,10 @@ disable-model-invocation: true
 **`## Generation`** — что делать после подтверждения. Порядок жёсткий, выполняется в один заход, без пауз на согласование:
 1. Read `references/templates.md` and write `CLAUDE.md`, the human cheat sheet, and `.claude/settings.local.json`. Права записываются **первыми** — иначе команды сборки (`node --version`, `npm install`) выполняются без разрешающих правил и пользователь видит сырые запросы подтверждения посреди работы, что запрещено `## Tone rules`.
 2. Read `references/scaffolds.md` and build the project itself in the shape chosen at Step 5.
-3. Launch the result and verify it, per `## Verification`.
-4. Put the project under version control, per `## Version control` in `references/scaffolds.md`. Never skip this: the cheat sheet's «верни, как было» promise depends on it.
-5. Give the final report, per `## Final report`.
+3. Reconcile the three written files with what was actually built — **обязательный шаг, выполняется всегда**, а не «если что-то изменилось». Перечитать `CLAUDE.md`, шпаргалку и `.claude/settings.local.json` и сверить с тем, что реально на диске и с реально собранным каркасом: каждое имя файла, каждую команду, каждый путь, каждую строку `allow`. Расхождения править в записанных файлах, а не в проекте. Каркас может смениться посреди прогона (нет Node.js → пользователь берёт «один файл»), и тогда неверны все три файла.
+4. Launch the result and verify it, per `## Verification`.
+5. Put the project under version control, per `## Version control` in `references/scaffolds.md`. Never skip this: the cheat sheet's «верни, как было» promise depends on it.
+6. Give the final report, per `## Final report`.
 
 Явно отметить: `references/*.md` читаются **только на этом этапе**, не во время интервью.
 
@@ -515,8 +516,9 @@ check(templates_text.count("@financialpostpunk") == 1,
 - Never run `git push`, never ask about GitHub, never set up a remote. This is purely a local safety net.
 
 **`## Launch and verify`** — общая процедура, обязательная в обоих вариантах:
-1. Launch the result.
-2. Single file: open it in the default browser (`open` on macOS, `start` on Windows, `xdg-open` on Linux) and confirm the page renders and the main action works.
+1. **Сверить три записанных файла с тем, что реально на диске** — обязательный шаг, выполняется всегда. Имена файлов, команды, строки `allow` — всё символ в символ против реального каркаса. Отдельно оговорено, что каркас может смениться посреди прогона (нет Node.js → «один файл»), и тогда из `allow` убираются `npm`-строки, а команда запуска меняется на двойной клик. Пользователю об этом не говорить.
+2. Launch the result.
+3. Single file: open it in the default browser (`open` on macOS, `start` on Windows, `xdg-open` on Linux) and confirm the page renders and the main action works.
 3. Real app: `npm install`, затем `npm start`, открыть браузер по адресу проекта, убедиться, что страница отрисовалась.
 4. On failure: fix it and launch again, up to three attempts. Do not report the failure to the user unless it needs their decision — and then in plain language, never as a raw error.
 5. After three failed attempts, stop: say in plain language what does not work, what already works, and what you will try next. Never claim success and never loop past three attempts.

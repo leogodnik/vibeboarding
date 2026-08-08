@@ -14,9 +14,10 @@ Order of operations, fixed:
 
 1. Write `CLAUDE.md`, the cheat sheet and `.claude/settings.local.json` from `references/templates.md` — first, so the permissions are in place before anything below runs a command.
 2. Build the shape — `## Single file` or `## Real app`.
-3. `## Launch and verify` — the project must actually run.
-4. `## Version control` — only after the launch check has passed.
-5. Give the final report, per `## Final report` in `SKILL.md`.
+3. Reconcile those three files with what actually got built — `## Launch and verify`, step 1. Always, not only when something looks off.
+4. `## Launch and verify` — the project must actually run.
+5. `## Version control` — only after the launch check has passed.
+6. Give the final report, per `## Final report` in `SKILL.md`.
 
 The folder to build in was already decided at `## Step 6` in `SKILL.md`, before the first file was written. Work in it and never move the project afterwards.
 
@@ -27,7 +28,7 @@ Chosen at Step 5: «Файл, который открывается двойны
 **Shape.** One self-contained HTML file in the project root. Nothing else is needed to run it.
 
 - Name it in the user's language, after what the project actually does: `Мои расходы.html`, `Калькулятор кредита.html`. Spaces are fine — the user double-clicks the file and never types its name.
-- Use that exact name, character for character, in `CLAUDE.md` «Как запустить» and in the cheat sheet. Three different spellings of the file name is the most common way this shape breaks. `CLAUDE.md` and the cheat sheet are written before this file exists, so settle on the name first and then use it unchanged; if it does change, go back and fix both.
+- Use that exact name, character for character, in `CLAUDE.md` «Как запустить» and in the cheat sheet. Three different spellings of the file name is the most common way this shape breaks. `CLAUDE.md` and the cheat sheet are written before this file exists, so settle on the name first and then use it unchanged. `## Launch and verify`, step 1, checks all three against each other and is where a drifted name gets fixed.
 - No `package.json`, no build step, no install step, nothing to run in a terminal. This is the «single-file shape» in `references/templates.md` → `## Permissions`: drop the two `npm` lines — `"Bash(npm install:*)"` and `"Bash(npm run:*)"` — from `allow`, keep the rest of `allow`, and leave `deny` and `ask` exactly as written there.
 
 **Self-contained means offline.** Markup, styles and script all live inside that one file, in `<style>` and `<script>` tags.
@@ -56,6 +57,7 @@ Chosen at Step 5: «Настоящее приложение».
 
 - If it is there, continue.
 - If it is not, do not paste an installation manual and do not show the raw error. Say in one plain sentence what has to be installed once, give the direct link `https://nodejs.org`, and offer to build the `## Single file` version right now so the user sees a working result today. Then do whatever they choose.
+- If they take the single-file version, the shape has changed after `CLAUDE.md`, the cheat sheet and `.claude/settings.local.json` were already written for a real app. Build the single-file shape, then correct all three in `## Launch and verify`, step 1 — that step is mandatory and is where this gets fixed.
 
 **Shape.** The smallest project that does the job.
 
@@ -77,12 +79,22 @@ Chosen at Step 5: «Настоящее приложение».
 
 Mandatory for both shapes. The project is not finished until it has been launched and seen to work.
 
-1. Launch the result yourself. Never write "готово" without having run it.
-2. **Single file:** open it in the default browser — `open "<name>.html"` on macOS, `start "" "<name>.html"` on Windows, `xdg-open "<name>.html"` on Linux. Confirm the page renders and that the main action actually works: the number is calculated, the file loads, the entry is saved and is still there after a reload.
-3. **Real app:** install the dependencies with `npm install`, start the app with `npm start` — the one documented command — open the browser at its address, and confirm the page renders and the main action works.
-4. **If it fails:** fix it and launch again — up to three attempts. Do not report the failure to the user unless it needs a decision only they can make, and then in plain language, never as a raw error message, stack trace or exit code.
-5. **After three failed attempts, stop.** Tell the user in plain language: what does not work, what already does work, and what you will try next. Never claim success, and never keep looping past three attempts.
-6. Only after a launch that worked: run `## Version control`, then report success and describe exactly what the user should see on screen.
+1. **Reconcile the three written files with what is actually on disk. This step is mandatory and runs every time — never treat it as a check to skip when nothing seems to have changed.** `CLAUDE.md`, the cheat sheet and `.claude/settings.local.json` were written before the build, from the plan, so nothing guarantees they describe the project that now exists. Re-open all three and compare against reality:
+
+   - Every file name, character for character — the HTML file the user double-clicks, and every file listed in «Где что лежит». The launch check below opens the file that exists, so a wrong name in the cheat sheet passes verification silently and leaves the user with a lifeline document that points at nothing.
+   - Every command, character for character — the documented launch command against the `start` script that is really in `package.json`, and any extra step the build added (for example the xlsx→CSV save-as step from `## Single file`, which has to be written into the cheat sheet's «Как запустить» now, not assumed to be there).
+   - Every line of `allow` in `.claude/settings.local.json` against the shape that was actually built.
+
+   **The shape itself can change mid-run.** The real-app build runs `node --version` after these three files are already written; if Node.js is missing and the user takes the offered `## Single file` version, all three describe a project that was never built. Then this step rewrites them: «Как запустить» becomes the double-click instruction instead of `npm start`, «Где что лежит» lists the HTML file, and the two `npm` lines — `"Bash(npm install:*)"` and `"Bash(npm run:*)"` — come out of `allow`. Fix the written files; never bend the project to match a stale document.
+
+   Say nothing to the user about any of this. It is bookkeeping, and `## Tone rules` bans narrating work in progress.
+
+2. Launch the result yourself. Never write "готово" without having run it.
+3. **Single file:** open it in the default browser — `open "<name>.html"` on macOS, `start "" "<name>.html"` on Windows, `xdg-open "<name>.html"` on Linux. Confirm the page renders and that the main action actually works: the number is calculated, the file loads, the entry is saved and is still there after a reload.
+4. **Real app:** install the dependencies with `npm install`, start the app with `npm start` — the one documented command — open the browser at its address, and confirm the page renders and the main action works.
+5. **If it fails:** fix it and launch again — up to three attempts. Do not report the failure to the user unless it needs a decision only they can make, and then in plain language, never as a raw error message, stack trace or exit code.
+6. **After three failed attempts, stop.** Tell the user in plain language: what does not work, what already does work, and what you will try next. Never claim success, and never keep looping past three attempts.
+7. Only after a launch that worked: run `## Version control`, then report success and describe exactly what the user should see on screen.
 
 ## Version control
 
