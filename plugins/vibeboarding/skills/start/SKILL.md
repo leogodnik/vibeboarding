@@ -1,12 +1,12 @@
 ---
-name: vibeboarding
-description: "Start a brand-new project for someone who is not a programmer. Asks a short, jargon-free interview in the user's own language — what they want to build, who will use it, where the data comes from, how they want to launch it — then builds a working project plus a short CLAUDE.md, a plain-language cheat sheet, and safe permission settings. Use ONLY when explicitly starting a new project from scratch; invoke manually with /vibeboarding (plugin skills resolve as /vibeboarding:vibeboarding)."
+name: start
+description: "Start a brand-new project for someone who is not a programmer. Asks a short, jargon-free interview in the user's own language — what they want to build, who will use it, where the data comes from, how they want to launch it — then builds a working project plus a short CLAUDE.md, a plain-language cheat sheet, and safe permission settings. Use ONLY when explicitly starting a new project from scratch; invoke manually with /vibeboarding:start (the bare /start also works)."
 disable-model-invocation: true
 ---
 
 # VIBEBOARDING
 
-An interview-driven bootstrap for a user who is not a programmer: ask a few plain-language questions, then build a working project for them. Manual-only; as a plugin skill it is invoked namespaced, `/vibeboarding:vibeboarding`. Everything the user sees and every file you generate is in the language picked at Step 0; these instructions stay in English.
+An interview-driven bootstrap for a user who is not a programmer: ask a few plain-language questions, then build a working project for them. Manual-only; as a plugin skill it is invoked namespaced, `/vibeboarding:start` (the bare `/start` also works). Everything the user sees and every file you generate is in the language picked at Step 0; these instructions stay in English.
 
 ## Language policy
 
@@ -110,6 +110,7 @@ Active on every turn, interview and generation alike:
 - No jargon. If a technical word is unavoidable, explain it in the same sentence.
 - Banned words, on every turn and in the final report, not only at Step 3 — say the plain replacement instead: «авторизация» → «вход по паролю»; «деплой» → «выложить в интернет»; «фронтенд» → «то, что видно на экране»; «бэкенд» → «то, что считает внутри»; «репозиторий» → «папка с проектом»; «зависимости» → «дополнительные программы». Ban the equivalents in whatever language Step 0 chose.
 - Never show a raw error message, stack trace, or exit code to the user. Say what happened in plain language, say you are fixing it, then fix it.
+- Never silently work around a blocked action. If anything is blocked, denied, or refused — a permission rule, a missing right, a tool that will not run — do not just try another route and stay quiet about it. This is the one exception to «не показывай ошибки»: the user is still never shown the raw error, but they are told in plain language what could not be done and what it means for them in practice. If it was version control, that means saying «сохранить историю изменений не получилось, поэтому вернуть предыдущую версию не получится».
 - Never blame the user for an unclear answer.
 - Short messages. No walls of text.
 - Do not narrate the technical work in progress. Report the result.
@@ -120,7 +121,7 @@ Only after confirmation at Step 6. Fixed order, done in one pass, with no pauses
 
 1. Read `references/templates.md` and write `CLAUDE.md`, the human cheat sheet, and `.claude/settings.local.json`. Permissions come first on purpose: they must already be in place before the build runs any command, or the user is stopped by raw approval prompts in the middle of the work, which is exactly what `## Tone rules` forbids.
 2. Read `references/scaffolds.md` and build the project itself in the shape chosen at Step 5.
-3. Reconcile the three written files with what was actually built. This step always runs — it is not a check you perform only when you suspect something changed. Re-open `CLAUDE.md`, the cheat sheet and `.claude/settings.local.json`, and compare, line by line, against what is now on disk and against the shape that actually got built: every file name, every command, every path, and every line in `allow`. Fix every mismatch in the written file, not in the project. The shape can change mid-run — the real-app build finds no Node.js and the user accepts the single-file version instead — and then all three files are wrong: the documented launch command has to become the double-click instruction, and the `npm` lines have to come out of `allow`. Do not launch anything until this is done.
+3. Reconcile the three written files with what was actually built. This step always runs — it is not a check you perform only when you suspect something changed. Re-open `CLAUDE.md`, the cheat sheet and `.claude/settings.local.json`, and compare, line by line, against what is now on disk and against the shape that actually got built: every file name, every command, every path, and every line in `allow`. Fix every mismatch in the written file, not in the project. The shape can change mid-run — the real-app build finds no Node.js and the user accepts the single-file version instead — and then all three files are wrong: the documented launch command has to become the double-click instruction, and the `npm` lines have to come out of `allow`. Do not launch anything until this is done. If any file ended up with a name other than the one promised in the Step 6 summary, tell the user, in one plain sentence naming both the promised name and the real one: «Файл, который я обещал назвать "<обещанное>", назвал "<фактическое>" — так понятнее». One sentence per renamed file, not a list of changes and not an apology. A better name is welcome; a silent one leaves the user holding a summary that no longer matches their folder.
 4. Launch the result and verify it, per `## Verification`.
 5. Put the project under version control, per `## Version control` in `references/scaffolds.md`. Never skip this: the cheat sheet's «верни, как было» promise depends on it.
 6. Give the final report, per `## Final report`.

@@ -55,15 +55,15 @@ if manifest is not None:
     check(manifest.get("name") == "vibeboarding", "plugin.json: name = vibeboarding")
     check(bool(manifest.get("description")), "plugin.json: есть description")
 
-skill_path = "plugins/vibeboarding/skills/vibeboarding/SKILL.md"
+skill_path = "plugins/vibeboarding/skills/start/SKILL.md"
 check((ROOT / skill_path).is_file(), f"есть файл {skill_path}")
 if (ROOT / skill_path).is_file():
     text = (ROOT / skill_path).read_text(encoding="utf-8")
     matched = re.match(r"^---\n(.*?)\n---\n", text, re.S)
     check(bool(matched), "SKILL.md: есть YAML-фронтматтер")
     front = matched.group(1) if matched else ""
-    check(re.search(r"^name:\s*vibeboarding\s*$", front, re.M) is not None,
-          "SKILL.md: name = vibeboarding")
+    check(re.search(r"^name:\s*start\s*$", front, re.M) is not None,
+          "SKILL.md: name = start")
     check(re.search(r"^description:\s*\S", front, re.M) is not None,
           "SKILL.md: есть description")
     check(re.search(r"^disable-model-invocation:\s*true\s*$", front, re.M) is not None,
@@ -76,7 +76,7 @@ if (ROOT / skill_path).is_file():
     check(text.count("@financialpostpunk") == 1,
           "SKILL.md: телеграм-канал упомянут ровно один раз")
 
-templates_path = "plugins/vibeboarding/skills/vibeboarding/references/templates.md"
+templates_path = "plugins/vibeboarding/skills/start/references/templates.md"
 check((ROOT / templates_path).is_file(), f"есть файл {templates_path}")
 if (ROOT / templates_path).is_file():
     templates = (ROOT / templates_path).read_text(encoding="utf-8")
@@ -87,7 +87,7 @@ if (ROOT / templates_path).is_file():
     check("@financialpostpunk" in templates,
           "templates.md: шпаргалка упоминает телеграм-канал")
 
-scaffolds_path = "plugins/vibeboarding/skills/vibeboarding/references/scaffolds.md"
+scaffolds_path = "plugins/vibeboarding/skills/start/references/scaffolds.md"
 check((ROOT / scaffolds_path).is_file(), f"есть файл {scaffolds_path}")
 if (ROOT / scaffolds_path).is_file():
     scaffolds = (ROOT / scaffolds_path).read_text(encoding="utf-8")
@@ -110,7 +110,7 @@ if root_readme.is_file():
           "README.md: есть команда установки маркетплейса")
     check("vibeboarding@leogodnik-plugins" in readme,
           "README.md: есть команда установки плагина")
-    check("/vibeboarding" in readme, "README.md: есть команда запуска")
+    check("/vibeboarding:start" in readme, "README.md: есть команда запуска")
     check("@financialpostpunk" in readme,
           "README.md: есть упоминание телеграм-канала")
 

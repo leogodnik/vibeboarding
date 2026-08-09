@@ -11,12 +11,12 @@ VIBEBOARDING — короткое интервью на понятном язы�
 ```text
 /plugin marketplace add leogodnik/vibeboarding
 /plugin install vibeboarding@leogodnik-plugins
-/vibeboarding
+/vibeboarding:start
 ```
 
-Запускайте `/vibeboarding` в **пустой папке** — плагин строит проект с нуля.
+Запускайте `/vibeboarding:start` в **пустой папке** — плагин строит проект с нуля.
 
-Когда начнёте набирать команду, подсказка предложит длинный вариант `/vibeboarding:vibeboarding` — это то же самое. Можно набрать короткое `/vibeboarding` целиком и нажать Enter, работает одинаково.
+Когда начнёте набирать команду, подсказка покажет полный вариант `/vibeboarding:start`. Короткое `/start` работает точно так же — наберите его целиком и нажмите Enter.
 
 ## Как это работает
 

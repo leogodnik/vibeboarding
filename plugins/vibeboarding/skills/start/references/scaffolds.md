@@ -87,7 +87,7 @@ Mandatory for both shapes. The project is not finished until it has been launche
 
    **The shape itself can change mid-run.** The real-app build runs `node --version` after these three files are already written; if Node.js is missing and the user takes the offered `## Single file` version, all three describe a project that was never built. Then this step rewrites them: «Как запустить» becomes the double-click instruction instead of `npm start`, «Где что лежит» lists the HTML file, and the two `npm` lines — `"Bash(npm install:*)"` and `"Bash(npm run:*)"` — come out of `allow`. Fix the written files; never bend the project to match a stale document.
 
-   Say nothing to the user about any of this. It is bookkeeping, and `## Tone rules` bans narrating work in progress.
+   Say nothing to the user about any of this, with one exception. It is bookkeeping, and `## Tone rules` bans narrating work in progress. The exception is a file that ended up with a name other than the one promised in the Step 6 summary: say so in one plain sentence naming both the promised name and the real one — «Файл, который я обещал назвать "<обещанное>", назвал "<фактическое>" — так понятнее». One sentence per renamed file, not a list of changes and not an apology. A better name is welcome; a silent one leaves the user holding a summary that no longer matches their folder.
 
 2. Launch the result yourself. Never write "готово" without having run it.
 3. **Single file:** open it in the default browser — `open "<name>.html"` on macOS, `start "" "<name>.html"` on Windows, `xdg-open "<name>.html"` on Linux. Confirm the page renders and that the main action actually works: the number is calculated, the file loads, the entry is saved and is still there after a reload.
@@ -128,7 +128,7 @@ Run this after the project files exist and after the launch check in `## Launch 
 
    If the commit fails only because a name and an email are not configured, set them locally for this project folder with a neutral value and commit again. Do not ask the user for them.
 
-4. **Say nothing about any of this.** Do not narrate it, do not list it in the final report, and never use the word «репозиторий» with the user — `## Tone rules` bans it. In the cheat sheet this shows up only as the fact that «Верни, как было до последних изменений» works.
+4. **Say nothing about any of this — unless it was blocked.** Do not narrate it, do not list it in the final report, and never use the word «репозиторий» with the user — `## Tone rules` bans it. In the cheat sheet this shows up only as the fact that «Верни, как было до последних изменений» works. The one exception is the blocked-action rule in `## Tone rules` of `SKILL.md`: if `git init`, `git add` or the commit is denied or refused, never quietly skip the step and carry on. Say in plain words that the history of changes was not saved and that «вернуть предыдущую версию не получится» — the cheat sheet promises it, and silence would leave that promise empty.
 
 5. **Local only.** Never run `git push`, never add a remote, never mention GitHub, never ask whether the user wants to publish. This is a safety net on their own computer and nothing else. The `ask` rule on `Bash(git push:*)` in the permissions template is a guard rail, not an invitation to use it.
 

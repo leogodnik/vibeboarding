@@ -19,7 +19,7 @@
 ## Форма поставки
 
 Отдельный новый репозиторий и отдельный плагин для Claude Code. Существующий FlashStart не
-меняется. Внутри — один скилл (`SKILL.md`), вызываемый вручную командой `/vibeboarding`.
+меняется. Внутри — один скилл (`SKILL.md`), вызываемый вручную командой `/vibeboarding:start`.
 Как и FlashStart, это не программа, а текстовая инструкция для Клода: как вести разговор и
 что создать в итоге. Структура повторяет FlashStart:
 
@@ -27,7 +27,7 @@
 .claude-plugin/marketplace.json
 plugins/vibeboarding/
   .claude-plugin/plugin.json
-  skills/vibeboarding/SKILL.md
+  skills/start/SKILL.md
   README.md
 README.md
 LICENSE
