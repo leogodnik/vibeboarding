@@ -1,6 +1,6 @@
 # Templates
 
-Read at generation time only, after Step 7 is confirmed. These three templates are filled in and written into the new project in this order: `CLAUDE.md`, the human cheat sheet, `.claude/settings.local.json`.
+Read at generation time only, after Step 8 is confirmed. These three templates are filled in and written into the new project in this order: `CLAUDE.md`, the human cheat sheet, `.claude/settings.local.json`.
 
 How to use this file:
 
@@ -8,7 +8,7 @@ How to use this file:
 - The Russian text in the templates is reference wording, not literal output. Translate it into the Step 0 language, keeping the meaning, the tone and roughly the length. If Step 0 is Русский, use it as written.
 - `<angle brackets>` mark a placeholder you replace with the real value for this project. Never leave a placeholder, and never write the angle brackets into the generated file.
 - Fill every template from the interview answers. Do not ask the user anything more at this stage.
-- These three files are written first, before the project itself is built (`## Generation` step 1 in `SKILL.md`), so the scaffold does not exist on disk yet. Fill them from the plan the user confirmed at Step 7. They are then reconciled with reality by a mandatory step that always runs after the build — `## Generation` step 3, spelled out as step 1 of `## Launch and verify` in `references/scaffolds.md`. Write your best version here; that step is what guarantees it ends up true.
+- These three files are written first, before the project itself is built (`## Generation` step 1 in `SKILL.md`), so the scaffold does not exist on disk yet. Fill them from the plan the user confirmed at Step 8. They are then reconciled with reality by a mandatory step that always runs after the build — `## Generation` step 3, spelled out as step 1 of `## Launch and verify` in `references/scaffolds.md`. Write your best version here; that step is what guarantees it ends up true.
 - `## Tone rules` from `SKILL.md` still applies to every word here: no jargon, short sentences, no raw error text.
 
 ## CLAUDE.md
@@ -28,10 +28,10 @@ Template:
 # <Project name in the user's language>
 
 ## О проекте
-<One or two sentences, taken from the Step 2 answer: what this is and who it is for. Plain words, no technical terms.>
+<One or two sentences, taken from the Step 3 answer: what this is and who it is for. Plain words, no technical terms.>
 
 ## Как запустить
-<Exactly one way to launch — the one chosen at Step 5. Real-app shape: the command is always `npm start`, in a code block, and nothing else. Single-file shape: the literal instruction «Открыть файл <name>.html двойным кликом».>
+<Exactly one way to launch — the one chosen at Step 6. Real-app shape: the command is always `npm start`, in a code block, and nothing else. Single-file shape: the literal instruction «Открыть файл <name>.html двойным кликом».>
 
 ## Где что лежит
 - `<file or folder>` — <what it is for, one line>
@@ -46,7 +46,7 @@ Template:
 
 Notes on the sections:
 
-- «О проекте» — reuse the user's own words from Step 2 where you can. Do not upgrade them into technical language.
+- «О проекте» — reuse the user's own words from Step 3 where you can. Do not upgrade them into technical language.
 - «Как запустить» — one line for the single-file shape (double click); for the real-app shape the one documented command is `npm start`, written exactly as it must be typed. `package.json` may also carry a `dev` script, but `dev` is never shown to the user, here or in the cheat sheet.
 - «Где что лежит» — one line per file this project will have, in the order the user will care about. The scaffold is built in the next step, so list what the confirmed plan says you are about to create — nothing speculative. The mandatory reconciliation step after the build (`## Launch and verify`, step 1) corrects this list against the files that really exist. Do not list every generated folder.
 - «Правила» — three or four items, each one plain sentence. The four above are the default set; keep all four unless one is meaningless for this project. Add a project-specific rule only if the interview produced one (for example: «Файл с выпиской не менять — из него читаются данные»).
@@ -84,7 +84,7 @@ Template:
 ## Если что-то сломалось
 1. Скажите Клоду: «Сломалось, вот что я делал: …» — и опишите своими словами последние действия.
 2. Не удаляйте файлы сами — почти всё чинится словами, а удалённое вернуть сложнее.
-3. Чтобы вернуть предыдущую рабочую версию, скажите Клоду: «Верни, как было до последних изменений».
+3. <If this project keeps its own history: «Чтобы вернуть предыдущую рабочую версию, скажите Клоду: „Верни, как было до последних изменений“». If it does not: «Этот проект лежит внутри вашего большого проекта, поэтому свои старые версии он отдельно не хранит».>
 
 ## Чего лучше не делать
 - <item 1>
@@ -95,8 +95,8 @@ Template:
 
 Notes on the sections:
 
-- «Что говорить Клоду дальше» — three to five ready phrases, written for this specific project, not generic advice. Each one must be a complete request the user can paste as is. Reference examples of the right shape and length: «Добавь на страницу график расходов по месяцам», «Сделай так, чтобы данные сохранялись после закрытия», «Поменяй цвета на более спокойные». Derive yours from what the user described at Step 2 and from what the project does not do yet.
-- «Если что-то сломалось» — keep all three steps and keep them in this order. The section ends there: the Telegram channel is not one of its steps.
+- «Что говорить Клоду дальше» — three to five ready phrases, written for this specific project, not generic advice. Each one must be a complete request the user can paste as is. Reference examples of the right shape and length: «Добавь на страницу график расходов по месяцам», «Сделай так, чтобы данные сохранялись после закрытия», «Поменяй цвета на более спокойные». Derive yours from what the user described at Step 3 and from what the project does not do yet.
+- «Если что-то сломалось» — keep all three steps and keep them in this order. The first two are the same in every project. The third depends on whether this project keeps a history of its own: `## Version control` in `references/scaffolds.md` creates one, except when the project folder sits inside a bigger project of the user's — then there is no earlier version to come back to, and the step must say so plainly instead of promising a return: «Этот проект лежит внутри вашего большого проекта, поэтому свои старые версии он отдельно не хранит». Never the word «репозиторий» — `## Tone rules` bans it. You already know which case you are in when you write this file: the project folder was fixed at Step 8, so run `git rev-parse --is-inside-work-tree` in it and write the matching sentence. The section ends there: the Telegram channel is not one of its steps.
 - «Чего лучше не делать» — two or three items, each a concrete action in this project. Default items that almost always apply: «Не переименовывайте файлы вручную — скажите Клоду, и он переименует», «Не удаляйте папку `.claude` — в ней настройки». Add a project-specific one if there is an obvious way to break this project by hand.
 - The channel line closes the whole file — the last line, after every section, with no heading above it and no sales tone around it. It appears exactly once in the cheat sheet; do not repeat it in any section, and never put it in `CLAUDE.md`.
 

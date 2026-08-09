@@ -70,8 +70,8 @@ if (ROOT / skill_path).is_file():
           "SKILL.md: disable-model-invocation: true")
     for anchor in ["## Step 0", "## Step 1", "## Step 2", "## Step 3",
                    "## Step 4", "## Step 5", "## Step 6", "## Step 7",
-                   "## Tone rules", "## Generation", "## Verification",
-                   "## Final report"]:
+                   "## Step 8", "## Tone rules", "## Generation",
+                   "## Verification", "## Final report"]:
         check(anchor in text, f"SKILL.md: есть раздел «{anchor}»")
     check(text.count("financialpostpunk") == 1,
           "SKILL.md: телеграм-канал упомянут ровно один раз")
