@@ -1,5 +1,10 @@
 # VIBEBOARDING — план реализации
 
+> **Статус: исторический снимок.** План выполнен, все шесть задач закрыты. Дальнейшие правки
+> вносились прямо в файлы плагина по итогам ревью и живого прогона, поэтому местами план уже
+> расходится с продуктом. Источник истины — файлы в `plugins/vibeboarding/` и проверочный
+> скрипт `scripts/check.py`, а не этот документ.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Собрать плагин Claude Code `vibeboarding`, который через короткое интервью на языке пользователя создаёт готовый к работе проект для человека без айти-бэкграунда.
