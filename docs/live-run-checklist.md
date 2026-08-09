@@ -39,7 +39,7 @@ ls -la ~/.claude/settings.local.json 2>/dev/null || echo "глобального
 нажмите **Enter**, не Esc: по Esc путь уходит в чат обычным сообщением и ничего не ставится.
 
 ```
-/plugin install vibeboarding@leogodnik-plugins
+/plugin install vibeboarding@leogodnik
 ```
 
 Если в ответе будет `Run /reload-plugins to activate.` — выполнить `/reload-plugins`.
@@ -47,8 +47,8 @@ ls -la ~/.claude/settings.local.json 2>/dev/null || echo "глобального
 Проверка, что встало (в обычном терминале):
 
 ```bash
-grep -o 'leogodnik-plugins' ~/.claude/plugins/known_marketplaces.json
-grep -o 'vibeboarding@leogodnik-plugins' ~/.claude/plugins/installed_plugins.json
+grep -o 'leogodnik' ~/.claude/plugins/known_marketplaces.json
+grep -o 'vibeboarding@leogodnik' ~/.claude/plugins/installed_plugins.json
 ```
 
 Обе команды должны что-то вывести.

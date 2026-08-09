@@ -10,7 +10,7 @@ VIBEBOARDING — короткое интервью на понятном язы�
 
 ```text
 /plugin marketplace add leogodnik/vibeboarding
-/plugin install vibeboarding@leogodnik-plugins
+/plugin install vibeboarding@leogodnik
 /vibeboarding:start
 ```
 

@@ -37,8 +37,8 @@ for rel in REQUIRED_FILES:
 
 marketplace = load_json(".claude-plugin/marketplace.json")
 if marketplace is not None:
-    check(marketplace.get("name") == "leogodnik-plugins",
-          "marketplace.json: name = leogodnik-plugins")
+    check(marketplace.get("name") == "leogodnik",
+          "marketplace.json: name = leogodnik")
     check(isinstance(marketplace.get("owner"), dict),
           "marketplace.json: owner — объект")
     plugins = marketplace.get("plugins")
@@ -108,7 +108,7 @@ if root_readme.is_file():
     readme = root_readme.read_text(encoding="utf-8")
     check("/plugin marketplace add" in readme,
           "README.md: есть команда установки маркетплейса")
-    check("vibeboarding@leogodnik-plugins" in readme,
+    check("vibeboarding@leogodnik" in readme,
           "README.md: есть команда установки плагина")
     check("/vibeboarding:start" in readme, "README.md: есть команда запуска")
     check("@financialpostpunk" in readme,

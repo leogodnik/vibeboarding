@@ -17,7 +17,7 @@
 
 Эти требования действуют во всех задачах.
 
-- Имена: маркетплейс `leogodnik-plugins`, плагин `vibeboarding`, скилл `start`, команда вызова `/vibeboarding:start` (короткое `/start` работает так же).
+- Имена: маркетплейс `leogodnik`, плагин `vibeboarding`, скилл `start`, команда вызова `/vibeboarding:start` (короткое `/start` работает так же).
 - Инструкции внутри `SKILL.md` и `references/*.md` пишутся **на английском**. Всё, что видит пользователь (вопросы, сводки, отчёты, созданные файлы), — на языке, выбранном на шаге 0.
 - В генерируемых проектах **не создавать**: git-хуков, docs-gate, структуры `docs/` с ADR, методологического слоя, монорепозитория, многопользовательской изоляции данных (RLS).
 - Синтаксис конфигов Claude Code проверен по документации 2026-08-08 и зафиксирован ниже. Значения использовать буквально:
@@ -28,7 +28,7 @@
   - `deny` перекрывает `allow` во всех режимах. Формат правила: `Tool(pattern)`, например `Bash(npm run test:*)`, `Read(./.env)`. `deny` — сеть, а не гарантия: правило `Bash()` не ловит составные команды (`cd x && rm -rf y`), а форма `:*` не покрывает голую команду — поэтому в списке есть и голые формы (`Bash(rm)`, `Bash(git reset --hard)`, `Bash(git clean)`).
   - Синтаксис `permissions` в шаблоне зафиксирован, но перед записью файла модель обязана сверить его с актуальной документацией Claude Code и следовать документации, если он изменился (эта часть конфига дрейфует).
   - Файл локальных прав: `.claude/settings.local.json`, в `.gitignore`.
-- Имена маркетплейсов, зарезервированные Anthropic, использовать нельзя (`claude-plugins-official`, `anthropic-plugins`, `claude-for-financial-services` и т.п.). `leogodnik-plugins` под запрет не попадает.
+- Имена маркетплейсов, зарезервированные Anthropic, использовать нельзя (`claude-plugins-official`, `anthropic-plugins`, `claude-for-financial-services` и т.п.). `leogodnik` под запрет не попадает.
 - **Телеграм-канал автора `@financialpostpunk`** упоминается ровно в трёх местах, каждый раз одной строкой и по делу, без рекламного тона:
   1. Корневой `README.md` — строка в конце: канал, из которого вырос плагин.
   2. Шпаргалка в сгенерированном проекте — в разделе «Если что-то сломалось»: куда написать, если Клод не справился.
@@ -109,8 +109,8 @@ for rel in REQUIRED_FILES:
 
 marketplace = load_json(".claude-plugin/marketplace.json")
 if marketplace is not None:
-    check(marketplace.get("name") == "leogodnik-plugins",
-          "marketplace.json: name = leogodnik-plugins")
+    check(marketplace.get("name") == "leogodnik",
+          "marketplace.json: name = leogodnik")
     check(isinstance(marketplace.get("owner"), dict),
           "marketplace.json: owner — объект")
     plugins = marketplace.get("plugins")
@@ -143,7 +143,7 @@ print("ВСЁ ХОРОШО")
 
 ```json
 {
-  "name": "leogodnik-plugins",
+  "name": "leogodnik",
   "owner": { "name": "Leonid Godnik" },
   "version": "1.0.0",
   "description": "Плагины Claude Code для курса «вайб-кодинг для финансистов».",
@@ -568,7 +568,7 @@ if root_readme.is_file():
     readme = root_readme.read_text(encoding="utf-8")
     check("/plugin marketplace add" in readme,
           "README.md: есть команда установки маркетплейса")
-    check("vibeboarding@leogodnik-plugins" in readme,
+    check("vibeboarding@leogodnik" in readme,
           "README.md: есть команда установки плагина")
     check("/vibeboarding:start" in readme, "README.md: есть команда запуска")
     check("@financialpostpunk" in readme,
@@ -589,7 +589,7 @@ if root_readme.is_file():
 
 ```
 /plugin marketplace add leogodnik/vibeboarding
-/plugin install vibeboarding@leogodnik-plugins
+/plugin install vibeboarding@leogodnik
 /vibeboarding:start
 ```
 
@@ -644,7 +644,7 @@ rm -rf /tmp/vibeboarding-test && mkdir -p /tmp/vibeboarding-test && cd /tmp/vibe
 
 ```
 /plugin marketplace add "/Users/leogodnik/Starter Skill/vibeboarding"
-/plugin install vibeboarding@leogodnik-plugins
+/plugin install vibeboarding@leogodnik
 ```
 
 Путь в кавычках обязателен — в нём есть пробел.

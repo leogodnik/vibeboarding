@@ -1,5 +1,5 @@
 {
-  "name": "leogodnik-plugins",
+  "name": "leogodnik",
   "owner": { "name": "Leonid Godnik" },
   "version": "1.0.0",
   "description": "Плагины Claude Code для курса «вайб-кодинг для финансистов».",
