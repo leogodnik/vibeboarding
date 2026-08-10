@@ -1,6 +1,6 @@
 # Scaffolds
 
-Read at generation time only, after Step 8 is confirmed. This file describes the two shapes a project can take, plus the two procedures that run for both shapes.
+Read at generation time only, after Step 9 is confirmed. This file describes the two shapes a project can take, plus the two procedures that run for both shapes.
 
 How to use this file:
 
@@ -8,7 +8,7 @@ How to use this file:
 - These instructions are English. Everything the user ends up seeing — file names, on-screen labels, comments in the code, commit messages — is written in the language picked at Step 0.
 - Russian text here is reference wording, not literal output. Translate it into the Step 0 language, keeping the meaning and roughly the length. If Step 0 is Русский, use it as written.
 - `<angle brackets>` mark a placeholder you replace with the real value. Never write the brackets into a generated file.
-- `## Tone rules` from `SKILL.md` applies to every word the user reads: no jargon, short sentences, never a raw error message.
+- `## Tone rules` from `SKILL.md` applies to every word the user reads, in the register chosen at Step 8: short sentences always, and — unless the user asked for technical terms — no jargon and never a raw error message.
 
 Order of operations, fixed:
 
@@ -19,7 +19,7 @@ Order of operations, fixed:
 5. `## Version control` — only after the launch check has passed.
 6. Give the final report, per `## Final report` in `SKILL.md`.
 
-The folder to build in was already decided at `## Step 8` in `SKILL.md`, before the first file was written. Work in it and never move the project afterwards.
+The folder to build in was already decided at `## Step 9` in `SKILL.md`, before the first file was written. Work in it and never move the project afterwards.
 
 ## Single file
 
@@ -107,7 +107,7 @@ Mandatory for both shapes. The project is not finished until it has been launche
 
    **The shape itself can change mid-run.** The real-app build runs `node --version` after these three files are already written; if Node.js is missing and the user takes the offered `## Single file` version, all three describe a project that was never built. Then this step rewrites them: «Как запустить» becomes the double-click instruction instead of `npm start`, «Где что лежит» lists the HTML file, and the two `npm` lines — `"Bash(npm install:*)"` and `"Bash(npm run:*)"` — come out of `allow`. Fix the written files; never bend the project to match a stale document.
 
-   Say nothing to the user about any of this, with one exception. It is bookkeeping, and `## Tone rules` bans narrating work in progress. The exception is a file that ended up with a name other than the one promised in the Step 8 summary: say so in one plain sentence naming both the promised name and the real one — «Файл, который я обещал назвать "<обещанное>", назвал "<фактическое>" — так понятнее». One sentence per renamed file, not a list of changes and not an apology. A better name is welcome; a silent one leaves the user holding a summary that no longer matches their folder.
+   Say nothing to the user about any of this, with one exception. It is bookkeeping, and `## Tone rules` bans narrating work in progress. The exception is a file that ended up with a name other than the one promised in the Step 9 summary: say so in one plain sentence naming both the promised name and the real one — «Файл, который я обещал назвать "<обещанное>", назвал "<фактическое>" — так понятнее». One sentence per renamed file, not a list of changes and not an apology. A better name is welcome; a silent one leaves the user holding a summary that no longer matches their folder.
 
 2. Launch the result yourself. Never write "готово" without having run it.
 3. **Single file:** open it in the default browser — `open "<name>.html"` on macOS, `start "" "<name>.html"` on Windows, `xdg-open "<name>.html"` on Linux. Confirm the page renders and that the main action actually works: the number is calculated, the file loads, the entry is saved and is still there after a reload.
@@ -136,7 +136,7 @@ Run this after the project files exist and after the launch check in `## Launch 
    git init
    ```
 
-   Only ever in the project folder chosen at `## Step 8` — never in a parent folder, and never in the user's home folder. `## Step 8` already guaranteed that folder is neither the home folder nor a folder full of the user's other things, so there is nothing to move and no path to rewrite here. Apart from the one case in step 1, never skip version control: skipping it hollows out the «верни, как было» promise the cheat sheet makes.
+   Only ever in the project folder chosen at `## Step 9` — never in a parent folder, and never in the user's home folder. `## Step 9` already guaranteed that folder is neither the home folder nor a folder full of the user's other things, so there is nothing to move and no path to rewrite here. Apart from the one case in step 1, never skip version control: skipping it hollows out the «верни, как было» promise the cheat sheet makes.
 
 3. **Write `.gitignore`** in the project root — in both cases, whether or not this project got a history of its own; it is a file inside the project folder, and the outer project's own `.gitignore` is still never touched. It must contain at least these two lines:
 
