@@ -1,6 +1,6 @@
 # Scaffolds
 
-Read at generation time only, after Step 14 has been answered. This file describes the two shapes a project can take, plus the procedures that run for both shapes.
+Read at generation time only, after Step 16 has been answered. This file describes the two shapes a project can take, plus the procedures that run for both shapes.
 
 How to use this file:
 
@@ -8,8 +8,8 @@ How to use this file:
 - These instructions are English. Everything the user ends up seeing — file names, on-screen labels, comments in the code, commit messages — is written in the language picked at Step 0.
 - Russian text here is reference wording, not literal output. Translate it into the Step 0 language, keeping the meaning and roughly the length. If Step 0 is Русский, use it as written.
 - `<angle brackets>` mark a placeholder you replace with the real value. Never write the brackets into a generated file.
-- `## Tone rules` from `SKILL.md` applies to every word the user reads, in the register chosen at Step 12: short sentences always, and — unless the user asked for technical terms — no jargon and never a raw error message.
-- Nothing in this file is a question. Every choice below is made from the interview answers and from what is already on the computer. `## Generation` promises one pass with no pauses; asking here breaks that promise.
+- `## Tone rules` from `SKILL.md` applies to every word the user reads, in the register chosen at Step 14: short sentences always, and — unless the user asked for technical terms — no jargon and never a raw error message.
+- Nothing in this file re-opens a question the interview already answered. The base and the store came from Steps 11 and 10; everything else below follows from the other answers and from what is already on the computer. `## Generation` promises one pass with no pauses, so this is not the place to start asking — the one thing that does get said out loud is the plain sentence owed to the user when the computer cannot honour an answer they gave, and even that is a statement, not a new question.
 
 Order of operations, fixed:
 
@@ -18,12 +18,12 @@ Order of operations, fixed:
 3. Write `CLAUDE.md` and the cheat sheet from `references/templates.md`, then commit.
 4. Build the shape — `## Single file` or `## Real app` — with the look `## Design reference` prescribes, then commit.
 5. Reconcile the three written files with what actually got built — `## Launch and verify`, step 1. Always, not only when something looks off.
-6. `## Launch and verify` — the project must actually run, and the list from Step 14 is then walked item by item. Then commit; that commit carries the fixes from step 5 too.
+6. `## Launch and verify` — the project must actually run, and the list from Step 16 is then walked item by item. Then commit; that commit carries the fixes from step 5 too.
 7. Give the final report, per `## Final report` in `SKILL.md`.
 
 Version control used to sit at the end of this list. It does not any more, and the reason is worth keeping in mind while you work: a history that starts only once everything is finished cannot rescue a build that went wrong halfway. Every step above that ends in a commit ends in one for that reason.
 
-The folder to build in was already decided at `## Step 13` in `SKILL.md` and created as the first action after Step 14. Work in it and never move the project afterwards.
+The folder to build in was already decided at `## Step 15` in `SKILL.md` and created as the first action after Step 16. Work in it and never move the project afterwards.
 
 ## Single file
 
@@ -57,7 +57,7 @@ The only things that genuinely cannot exist here are a font you do not have on t
 
 **Interface.** Large readable font. Plain labels in the Step 0 language — never leave English words on screen when the language is not English. Works on a narrow phone screen: a `<meta name="viewport">` tag, no fixed pixel widths, nothing cut off at the edge.
 
-**The look** is governed by `## Design reference` — the Step 10 sample if there was one, otherwise the Step 11 answer.
+**The look** is governed by `## Design reference` — the Step 12 sample if there was one, otherwise the Step 13 answer.
 
 ## Real app
 
@@ -65,15 +65,15 @@ Chosen at Step 9: «Настоящее приложение».
 
 ### Choosing the base
 
-The language and the base are chosen here, from the answers and from what is on the computer. There is no default language and nothing is hardwired. The user is never asked and never sees the question.
+**The base is not yours to pick. The user chose it at Step 11**, from two options with one of them recommended, and that answer is what you build on. Nothing here is hardwired and nothing is decided by taste; what is left for this section is one thing only — what to do when the computer does not have what they chose.
 
-1. **Read what the project actually does**, from Step 3 and Step 7:
-   - Numbers, tables, files, reports, calculations, reading Excel or CSV, anything the person already does in a spreadsheet → **Python**.
-   - A busy interface — many screens, a lot of live interaction, something meant to be used by many people in a browser → **Node.js**.
-2. **If both fit, take the one that is already installed.** Check without asking: `python3 --version`, `node --version`. If both are installed, take Python: this audience already writes Python for their spreadsheets, and code they can read is worth more to them than code you find tidier.
-3. **If the one you chose is missing and the other one is there** and can do the job — take the one that is there, silently. Never make the user install something to satisfy a preference of yours.
-4. **If neither is there** — do not paste an installation manual and do not show the raw error. Say in one plain sentence what has to be installed once, give the direct link (`https://www.python.org/downloads/` for Python, `https://nodejs.org` for Node.js), and offer to build the `## Single file` version right now so the user sees a working result today. Then do whatever they choose. If they take the single-file version, the shape has changed after `CLAUDE.md`, the cheat sheet and `.claude/settings.local.json` were already written for a real app — `## Launch and verify`, step 1, is mandatory and is where all three get fixed.
-5. **State the choice in one sentence, never as a question**: «Сделаю на Питоне — на нём же вы пишете скрипты к таблицам». In «С объяснениями» mode, one everyday analogy first.
+1. **Take the answer from Step 11** — Python or Node.js — and check whether it is there: `python3 --version`, or `node --version`. Nobody was asked anything before this moment: `## Interview rules` in `SKILL.md` forbids running a check during the interview, because an approval prompt in the middle of a question is exactly what the user cannot judge.
+2. **It is installed** → build on it and say nothing. The choice was already stated out loud at Step 16; repeating it now is narrating work in progress.
+3. **It is missing and the other one is there.** Never swap silently — a silent swap is the very thing Steps 10 and 11 were added to stop. Say it in one plain sentence: what they picked is not on this computer, the other one is, it will do this job just as well, and switching costs nothing today. Then build on the one that is there, unless the user says otherwise. Do not hand them an installation manual for the missing one; if they ask for it, one sentence and the direct link (`https://www.python.org/downloads/` for Python, `https://nodejs.org` for Node.js).
+4. **If neither is there** — do not paste an installation manual and do not show the raw error. Say in one plain sentence what has to be installed once, give the direct link, and offer to build the `## Single file` version right now so the user sees a working result today. Then do whatever they choose. If they take the single-file version, the shape has changed after `CLAUDE.md`, the cheat sheet and `.claude/settings.local.json` were already written for a real app — `## Launch and verify`, step 1, is mandatory and is where all three get fixed.
+5. **Never override the answer for a reason of your own** — not because the other base would suit the task better in your view, not because a library is nicer there. Step 11 already put the recommendation in front of the user and they answered it. If the answer genuinely cannot be built, that is one of the cases above and it is said out loud, not worked around.
+
+**If Step 11 somehow did not run** — a session resuming from a plan file that predates it, an interview that was cut short — fall back to the recommendation logic written at Step 11 in `SKILL.md`: what the project does decides, and when both fit it is Python. Then state the choice in one sentence, never as a question: «Сделаю на Питоне — на нём же вы пишете скрипты к таблицам». In «С объяснениями» mode, one everyday analogy first.
 
 **Frameworks: one, well known, boring.** Python → Flask or FastAPI with server-rendered templates; Streamlit is fine when the project really is a dashboard and nothing else. Node.js → Express with a plain front end, or Vite with React when the interface genuinely has many moving parts. Never a second framework on top of the first.
 
@@ -94,14 +94,15 @@ The smallest project that does the job.
 
 ### Data
 
-The store is decided here, silently, from three answers: how many people (Step 5), how many sources (Step 7), and where it will live (Step 8).
+**The store is not yours to pick either. The user chose it at Step 10** — «файл рядом с проектом» or «настоящая база данных» — after seeing what each one gives and costs, with the recommendation marked. Answers 5, 7 and 8 have already done their work there: they decided which option carried the «рекомендую» label. What is left here is honouring the answer and handling the one way the computer can contradict it.
 
 **The store.**
 
-- **SQLite** is the default: one file next to the project, nothing to install, nothing to start, nothing that can fail to connect. It covers almost everything this audience asks for, including several people using the project on one computer.
-- **PostgreSQL** — only if it is **already running on this computer**. Check it, do not ask: `pg_isready`, or one connection attempt on the default port. Running → use it, create the project's own database inside it. Not running, not installed, refuses → SQLite, silently.
+- **«Файл рядом с проектом» → SQLite.** One file next to the project, nothing to install, nothing to start, nothing that can fail to connect. Build it and say nothing — the user already knows, they picked it.
+- **«Настоящая база данных» → PostgreSQL, but only if it is already running on this computer.** Check it: `pg_isready`, or one connection attempt on the default port. Running → use it and create the project's own database inside it.
+- **Chosen but not running** — never fall back in silence. Step 10 promised the user that nothing would be installed and that this option needs a database that is already there, so say the outcome in one plain sentence: it was not found running on this computer, so the data goes into a file next to the project for now, and moving it over later is a settings change rather than a rebuild. One sentence, no port numbers, no error text. Then build on SQLite and carry on — this does not stop the build and is not a question.
 - **Never install a database.** Not by yourself, and never by handing the user steps to run. There is no case in this plugin where a database gets installed — a project that works today beats an installation the person cannot finish.
-- Say nothing about the check either way. One everyday sentence about what the data lives in is enough, and in «С объяснениями» mode one analogy before it: «база данных — это как Excel-файл, только несколько человек могут писать в него одновременно и он не ломается».
+- **If Step 10 did not run** — the double-click shape, a project that keeps nothing, or a plan file older than this step — SQLite is the default and nothing is asked or announced beyond the one everyday sentence about where the data lives. In «С объяснениями» mode, one analogy before it: «база данных — это как Excel-файл, только несколько человек могут писать в него одновременно и он не ломается».
 
 **With PostgreSQL, the data also has to survive a rollback.**
 
@@ -118,7 +119,8 @@ So when PostgreSQL was the store:
 - Every table, every read and every write goes through a query layer that is not tied to one engine: **SQLAlchemy** for Python, **Knex** for Node.js.
 - No SQL written for one engine's dialect: no `SERIAL`, no Postgres-only types, no SQLite-only tricks, no hand-built strings for one and not the other.
 - The connection address lives in **exactly one place** — one line in one file. Moving from SQLite to a real database is then that one line plus copying the data across, not a rewrite.
-- Because of this, the answers that point at a real database — several sources at Step 7, several people at Step 5, «из интернета» at Step 8 — cost nothing when no database is running. Build on SQLite and write one line into `CLAUDE.md` «Что учесть потом»: the data work is written so the base can be swapped, and moving to a real database is a settings change, not a rebuild. It is a note, not a debt. Never show a connection error, never mention a port, never present this as a compromise.
+- Because of this, the answers that point at a real database — several sources at Step 7, several people at Step 5, «из интернета» at Step 8 — cost nothing when the user chose the file at Step 10 anyway, or when no database is running. Build on SQLite and write one line into `CLAUDE.md` «Что учесть потом»: the data work is written so the base can be swapped, and moving to a real database is a settings change, not a rebuild. It is a note, not a debt. Never show a connection error, never mention a port, never present this as a compromise.
+- That silence has exactly one exception, and it is the one above: when the user **chose** «настоящая база данных» at Step 10 and it turned out not to be running, they are told in one plain sentence what happened instead. Everything they were not promised stays unsaid; the thing they picked and did not get is said.
 
 **Logins and rights.**
 
@@ -143,14 +145,14 @@ So when PostgreSQL was the store:
 
 Applies to both shapes. Two jobs: apply what the person actually gave, and make sure it survives past this session.
 
-**If a sample was given at Step 10**, it is one of four kinds, and all four carry the same weight. None of them is a weaker form of another.
+**If a sample was given at Step 12**, it is one of four kinds, and all four carry the same weight. None of them is a weaker form of another.
 
 - **A link** to a site or a program. Do not open it and do not fetch it. What you use is what the user said about it, plus the genre the name suggests. Do not ask them to explain it further.
 - **A picture in the project folder.** Open it and look at it before you write a single line of the interface — not after. Take the layout, the colours, the type sizes, the density, how much decoration there is.
 - **A ready-made design description from another tool.** Treat it as instructions and follow them point by point. Never compress it into «в спокойных тонах» and then build your own thing — that is the same as losing it. Ignore only the parts that genuinely cannot exist in the chosen shape (a web font in a file that must open offline), and say which part that was, in one plain sentence, in the final report.
 - **Their own words.** Exactly the same weight as everything above. Follow them literally: if they said «как в банковском приложении, только без рекламы», that is a brief.
 
-**If no sample was given**, the Step 11 answer governs the visual treatment — colours, spacing, type sizes, how much decoration there is:
+**If no sample was given**, the Step 13 answer governs the visual treatment — colours, spacing, type sizes, how much decoration there is:
 
 - «Строго, по-деловому» — restrained business-report styling: near-white background, dark text, one accent colour, thin dividing lines, aligned columns, numbers right-aligned. No rounded cards, no gradients, no emoji.
 - «Мягко и спокойно» — calm everyday styling: soft muted background, generous spacing, gently rounded corners, one warm accent, nothing shouty. It is opened every day, not presented once.
@@ -175,14 +177,14 @@ Mandatory for both shapes. The project is not finished until it has been launche
 
    **The shape and the base can both change mid-run.** The real-app build looks for Python and Node.js after these three files are already written; if neither is there and the user takes the offered `## Single file` version, all three describe a project that was never built. Then this step rewrites them: «Как запустить» becomes the double-click instruction instead of a command, «Где что лежит» lists the HTML file, and the base's lines come out of `allow`. Fix the written files; never bend the project to match a stale document.
 
-   Say nothing to the user about any of this, with one exception. It is bookkeeping, and `## Tone rules` bans narrating work in progress. The exception is a file that ended up with a name other than the one promised in the Step 13 summary: say so in one plain sentence naming both the promised name and the real one — «Файл, который я обещал назвать "<обещанное>", назвал "<фактическое>" — так понятнее». One sentence per renamed file, not a list of changes and not an apology. A better name is welcome; a silent one leaves the user holding a summary that no longer matches their folder.
+   Say nothing to the user about any of this, with one exception. It is bookkeeping, and `## Tone rules` bans narrating work in progress. The exception is a file that ended up with a name other than the one promised in the Step 15 summary: say so in one plain sentence naming both the promised name and the real one — «Файл, который я обещал назвать "<обещанное>", назвал "<фактическое>" — так понятнее». One sentence per renamed file, not a list of changes and not an apology. A better name is welcome; a silent one leaves the user holding a summary that no longer matches their folder.
 
 2. Launch the result yourself. Never write "готово" without having run it.
 3. **Single file:** open it in the default browser — `open "<name>.html"` on macOS, `start "" "<name>.html"` on Windows, `xdg-open "<name>.html"` on Linux. Confirm the page renders and that the main action actually works: the number is calculated, the file loads, the entry is saved and is still there after a reload.
 4. **Real app:** install the extra programs the ordinary way for the chosen base — `npm install`, or a `.venv` and `pip install`. If the store is PostgreSQL, run the seeding script from `### Data` now, so the screens have something on them. Then start the app with the one documented launch command, open the browser at the documented address, and confirm the page renders and the main action works.
 5. **If it fails:** fix it and launch again — up to three attempts. Do not report the failure to the user unless it needs a decision only they can make, and then in plain language, never as a raw error message, stack trace or exit code.
 6. **After three failed attempts, stop.** Tell the user in plain language: what does not work, what already does work, and what you will try next. Never claim success, and never keep looping past three attempts.
-7. **Then walk the list from Step 14** — every screen and every part you named there, one at a time, per `## Verification` in `SKILL.md`. A launch that worked only proves the project starts. Something missing from that list is built now and checked again; it does not count against the three attempts above.
+7. **Then walk the list from Step 16** — every screen and every part you named there, one at a time, per `## Verification` in `SKILL.md`. A launch that worked only proves the project starts. Something missing from that list is built now and checked again; it does not count against the three attempts above.
 8. Only after a launch that worked and a list with nothing left unchecked: make the commit from step 5 of `## Version control`, then report success and describe exactly what the user should see on screen.
 
 ## Version control
@@ -205,7 +207,7 @@ Mandatory for both shapes, and invisible to the user. It exists so the cheat she
    git init
    ```
 
-   Only ever in the project folder chosen at `## Step 13` — never in a parent folder, and never in the user's home folder. `## Step 13` already guaranteed that folder is neither the home folder nor a folder full of the user's other things, so there is nothing to move and no path to rewrite here. Apart from the one case in step 1, never skip version control: skipping it hollows out the «верни, как было» promise the cheat sheet makes.
+   Only ever in the project folder chosen at `## Step 15` — never in a parent folder, and never in the user's home folder. `## Step 15` already guaranteed that folder is neither the home folder nor a folder full of the user's other things, so there is nothing to move and no path to rewrite here. Apart from the one case in step 1, never skip version control: skipping it hollows out the «верни, как было» promise the cheat sheet makes.
 
 3. **Write `.gitignore`** in the project root — in both cases, whether or not this project got a history of its own; it is a file inside the project folder, and the outer project's own `.gitignore` is still never touched. This is the only place `.gitignore` is written. It must contain at least these lines, all of them, before the first commit:
 
@@ -242,7 +244,7 @@ Mandatory for both shapes, and invisible to the user. It exists so the cheat she
 
    - after `CLAUDE.md` and the cheat sheet have been written;
    - after the project itself has been built;
-   - after the launch check in `## Launch and verify` has passed and the Step 14 list has been walked — this one also carries the fixes the reconciliation step made to the three written files.
+   - after the launch check in `## Launch and verify` has passed and the Step 16 list has been walked — this one also carries the fixes the reconciliation step made to the three written files.
 
    ```bash
    git add -A
@@ -261,10 +263,10 @@ Not in either shape, no matter how tempting or how standard it looks elsewhere:
 
 - Git hooks of any kind.
 - A documentation gate, or any rule that blocks work until a document is updated.
-- A `docs/` tree, architecture decision records, or design documents. The project has `CLAUDE.md`, one cheat sheet, and nothing beyond what the interview actually produced: `design.md` when the user gave a long sample at Step 10, the plan file when Step 14 was answered «сохраните план файлом», `.env.example` when the project uses `.env`, and the seeding script when the store is PostgreSQL. Never a document written for its own sake.
+- A `docs/` tree, architecture decision records, or design documents. The project has `CLAUDE.md`, one cheat sheet, and nothing beyond what the interview actually produced: `design.md` when the user gave a long sample at Step 12, the plan file when Step 16 was answered «сохраните план файлом», `.env.example` when the project uses `.env`, and the seeding script when the store is PostgreSQL. Never a document written for its own sake.
 - A methodology or process layer on top of the project.
 - A monorepo, workspaces, or more than one dependency manifest.
 - Separate data isolation per customer.
 - Anything from the plans at Step 4. Those are written into `CLAUDE.md` and built in a later conversation, never today — see `## Now and later` in `SKILL.md`.
 
-Anything the interview did not actually ask for is out of scope. When in doubt, build less — but never less than the person asked for. Something they described at Step 3 or showed at Step 10 is in scope, and dropping it is not simplicity, it is a project that does not do the job.
+Anything the interview did not actually ask for is out of scope. When in doubt, build less — but never less than the person asked for. Something they described at Step 3 or showed at Step 12 is in scope, and dropping it is not simplicity, it is a project that does not do the job.
