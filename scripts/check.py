@@ -70,36 +70,40 @@ if (ROOT / skill_path).is_file():
           "SKILL.md: disable-model-invocation: true")
     for anchor in ["## Step 0", "## Step 1", "## Step 2", "## Step 3",
                    "## Step 4", "## Step 5", "## Step 6", "## Step 7",
-                   "## Step 8", "## Step 9", "## Tone rules", "## Generation",
+                   "## Step 8", "## Step 9", "## Step 10", "## Step 11",
+                   "## Step 12", "## Step 13", "## Step 14",
+                   "## Saving the plan instead of building",
+                   "## Tone rules", "## Generation",
                    "## Verification", "## Final report"]:
         check(anchor in text, f"SKILL.md: есть раздел «{anchor}»")
-    check(text.count("financialpostpunk") == 1,
-          "SKILL.md: телеграм-канал упомянут ровно один раз")
+    check("financialpostpunk" not in text,
+          "SKILL.md: финальный отчёт заканчивается делом, без телеграм-канала")
 
 templates_path = "plugins/vibeboarding/skills/start/references/templates.md"
 check((ROOT / templates_path).is_file(), f"есть файл {templates_path}")
 if (ROOT / templates_path).is_file():
     templates = (ROOT / templates_path).read_text(encoding="utf-8")
-    for anchor in ["## CLAUDE.md", "## Cheat sheet", "## Permissions"]:
+    for anchor in ["## CLAUDE.md", "## Cheat sheet", "## Permissions",
+                   "## Plan file"]:
         check(anchor in templates, f"templates.md: есть раздел «{anchor}»")
     check("acceptEdits" in templates, "templates.md: режим прав acceptEdits")
     check('"deny"' in templates, "templates.md: есть список deny")
-    check("@financialpostpunk" in templates,
-          "templates.md: шпаргалка упоминает телеграм-канал")
+    check("financialpostpunk" not in templates,
+          "templates.md: шпаргалка заканчивается делом, без телеграм-канала")
 
 scaffolds_path = "plugins/vibeboarding/skills/start/references/scaffolds.md"
 check((ROOT / scaffolds_path).is_file(), f"есть файл {scaffolds_path}")
 if (ROOT / scaffolds_path).is_file():
     scaffolds = (ROOT / scaffolds_path).read_text(encoding="utf-8")
-    for anchor in ["## Single file", "## Real app", "## Version control",
-                   "## Launch and verify"]:
+    for anchor in ["## Single file", "## Real app", "## Design reference",
+                   "## Version control", "## Launch and verify"]:
         check(anchor in scaffolds, f"scaffolds.md: есть раздел «{anchor}»")
     check("git init" in scaffolds, "scaffolds.md: каркас создаёт git-репозиторий")
-
-templates_text = (ROOT / templates_path).read_text(encoding="utf-8") \
-    if (ROOT / templates_path).is_file() else ""
-check(templates_text.count("@financialpostpunk") == 1,
-      "templates.md: телеграм-канал упомянут ровно один раз")
+    check("before the project is built" in scaffolds,
+          "scaffolds.md: история изменений поднимается до сборки, а не после")
+    for line in ["!.env.example", "*-service-account.json",
+                 "credentials.json"]:
+        check(line in scaffolds, f"scaffolds.md: .gitignore закрывает {line}")
 
 for rel in ["README.md", "plugins/vibeboarding/README.md"]:
     check((ROOT / rel).is_file(), f"есть файл {rel}")

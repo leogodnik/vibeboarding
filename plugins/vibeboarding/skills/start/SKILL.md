@@ -1,6 +1,6 @@
 ---
 name: start
-description: "Start a brand-new project for someone who is not a programmer. Asks a plain-language interview in the user's own language — what they want to build, what they plan after that, who will use it and with what rights, where the data comes from and how many sources there are, where the project will live, how they want to launch it, what it should look like — then builds a working project plus a short CLAUDE.md, a plain-language cheat sheet, and safe permission settings. Use ONLY when explicitly starting a new project from scratch; invoke manually with /vibeboarding:start (the bare /start also works)."
+description: "Start a brand-new project for someone who is not a programmer. Asks a plain-language interview in the user's own language — what they want to build, what they plan after that, who will use it and with what rights, where the data comes from and how many sources there are, where the project will live, how they want to launch it, what it should look like — then says in plain words what it is about to build and waits for a go-ahead, or writes that plan to a file for a later session, and builds a working project plus a short CLAUDE.md, a plain-language cheat sheet, and safe permission settings. Use ONLY when explicitly starting a new project from scratch; invoke manually with /vibeboarding:start (the bare /start also works)."
 disable-model-invocation: true
 ---
 
@@ -24,8 +24,15 @@ The interview asks more than it strictly needs to build something. That is delib
 - A picker holds 2–4 options. Never write a step with more; if a step needs a fifth answer, make one option «Другой» and take the detail as free text on the next turn.
 - Every picker step lists an explicit "I don't know — you decide" option as one of its options, with three exemptions: Step 0, because its four slots are already full and there is no sensible default before the language is known; Step 1, because its three answers are the only things that can be done about a folder that is already occupied and none of them is a taste to defer; and Step 11, because its first option, «На ваш вкус», already *is* the answer for someone with no preference. Taking the option is never penalised: apply that option's stated default, name the choice in one short sentence, and move on. Never reply with "please clarify".
 - Never ask about anything the user would have to look up. Every question is about their work and their life; every technical decision is derived from the plain-language answers. No question in this interview names a language, a library, a database, a server or a service.
+- **A way out on the technical steps — 5, 6, 7, 8 and 9.** The mode picked at Step 2 is chosen once, before the user has seen a single question; it cannot help someone who is moving fast and trips on one question. So each of those five steps offers «не понимаю, объясните подробнее», in one of two forms, because a picker holds no more than four options:
+  - **Steps 6 and 9 have a free slot** — there it is an explicit option, «Не понимаю, объясните подробнее», listed alongside the others.
+  - **Steps 5, 7 and 8 already fill all four slots** — there it is one short line under the question instead: «Не понимаете вопрос — так и напишите, объясню подробнее». An answer in those words, or any answer that says the person does not understand, is taken exactly the same way as the option would be.
+
+  The mechanic is the same in both forms and it is strict: **two or three sentences per option — what you get and what you pay — and then the same question again, unchanged.** Never choose for the user after explaining: the point is that they decide, now that they can. Never let the explanation grow into a lecture; two or three sentences per option is the whole budget, and there is no second, longer explanation to escalate to. This is not the Step 2 mode and does not change it: the mode still governs every other turn.
+
+  Never offer this anywhere else. Step 0 (the language), Step 1 (the folder), Step 2 (the mode) and Step 12 (how to talk) have nothing technical to weigh, and Steps 3, 4, 10 and 11 ask about the user's own task and taste, where there is no cost to explain.
 - Adapt: if an answer makes a later question pointless, skip that step. Steps 6 and 11 are conditional by design and are skipped silently, with nothing said about the skip.
-- Run Steps 0–13 in order. Create no files, and touch no `references/` file, before Step 13 is confirmed.
+- Run Steps 0–14 in order. Create no files, and touch no `references/` file, before Step 14 has been answered.
 
 ## Step 0. Language
 
@@ -43,7 +50,7 @@ Look at the working directory before you ask anything else. **If it is empty and
 Otherwise, own turn, picker, no free text. Lead-in: «Здесь уже что-то есть. В этой папке уже лежат файлы. Что вы хотите?» Three options:
 
 - «Доработать то, что уже здесь» — stop here and create nothing. This is the most valuable of the three answers, so make it land that way: say in one or two plain sentences that for this they need no command at all — they just tell Claude in ordinary words what to change — and give one concrete example shaped by what is actually in this folder, in the manner of «добавь на страницу график по месяцам». The person must leave knowing exactly what to type next, not feeling refused.
-- «Сделать новый проект рядом» — continue the interview normally. The project goes into a subfolder named after it, created at Step 13; the files already in this folder are never touched.
+- «Сделать новый проект рядом» — continue the interview normally. The project goes into a subfolder named after it, decided at Step 13 and created once Step 14 has been answered; the files already in this folder are never touched.
 - «Я тут по ошибке» — stop, create nothing, one short friendly line.
 
 If the working directory is the user's home folder, drop «Доработать то, что уже здесь» — nothing there is one project to extend — and offer the other two. A picker takes 2–4 options, so two is fine.
@@ -91,6 +98,7 @@ Whatever comes back is a plan, and plans are never built. Anything the user drop
 ## Step 5. Who will use it
 
 Own turn. Picker: «Только я» / «Я и ещё несколько человек» / «Много людей, в том числе посторонние» / «Пока не знаю».
+All four slots are taken, so the way out for someone who does not understand the question is the line under it — per `## Interview rules`, add «Не понимаете вопрос — так и напишите, объясню подробнее».
 Draw the technical conclusions yourself, in the plain words required by `## Tone rules`:
 
 - Только я → no password entry; data stays locally on their machine.
@@ -104,12 +112,13 @@ How the data is actually stored does not follow from this step alone. It follows
 
 Conditional. Ask it only when Step 5 was «Я и ещё несколько человек» or «Много людей». Otherwise skip it in silence — do not mention that a question was skipped.
 
-Own turn. Picker, three options. Reference wording:
+Own turn. Picker, four options. Reference wording:
 
 Question: «Все, кто будет этим пользоваться, делают одно и то же — или у людей разные роли?»
 
 - «Все делают одно и то же» — one kind of user, one set of screens.
 - «Кто-то только смотрит, кто-то вносит» — two kinds of user: one who can look at everything, one who can also enter and change. That is the whole of it.
+- «Не понимаю, объясните подробнее» — the fourth slot is free here, so the way out is a real option. Handle it per `## Interview rules`: two or three sentences on each of the two answers above, then this same question again.
 - «Не знаю — решите сами» → take «все делают одно и то же», name that choice in one sentence, move on.
 
 Ask it in these words about work, never as «права доступа» or «роли пользователей» — `## Tone rules` bans the jargon and this step is the reason the jargon is not needed. Two kinds of user is the ceiling: never build a system of permissions the interview did not ask for.
@@ -117,6 +126,7 @@ Ask it in these words about work, never as «права доступа» or «р
 ## Step 7. Where the data comes from
 
 Own turn. Picker: «Ввожу руками» / «Из одного файла — Excel или выгрузка» / «Из нескольких мест — файлы, системы, выгрузки» / «Пока не знаю».
+All four slots are taken, so the way out is the line under the question — per `## Interview rules`, add «Не понимаете вопрос — так и напишите, объясню подробнее».
 
 - Из одного файла → in the next, separate, free-text turn, ask the user to put a sample file into the project folder or to describe in words what columns it has.
 - Из нескольких мест → in the next, separate, free-text turn, one free-text question: «Перечислите, откуда именно будут приходить данные — всё, что вспомните.» The count comes out of that answer; do not ask for it as a number. If any of the named places is another system, warn in one sentence that it may need access you do not have right now, and offer to work from an exported file as a first step.
@@ -135,6 +145,8 @@ Question: «Где этим удобнее пользоваться — толь
 - «Сейчас на компьютере, а потом из интернета»
 - «Не знаю — решите сами» → take «только на моём компьютере», name that choice in one sentence, move on.
 
+All four slots are taken, so the way out is the line under the question — per `## Interview rules`, add «Не понимаете вопрос — так и напишите, объясню подробнее».
+
 Never use the words «деплой» or «хостинг» — `## Tone rules` bans the first and the second is no better.
 
 If the answer is «из интернета» or «потом из интернета», say in one plain sentence that today the project is built on their computer, and that putting it on the internet is a separate piece of work they can ask for whenever they want. Nothing is published in this session — `## Version control` in `references/scaffolds.md` forbids it outright.
@@ -143,10 +155,11 @@ This answer feeds two decisions at build time: the shape at Step 9 and the stora
 
 ## Step 9. How do you want to launch it
 
-Own turn. Picker, three options, with an honest explanation of each:
+Own turn. Picker, four options, with an honest explanation of each:
 
 - «Файл, который открывается двойным кликом» — «Ничего устанавливать не надо. Открывается в браузере как обычная страница. Подходит для калькуляторов, дашбордов и таблиц.»
 - «Настоящее приложение» — «Возможностей больше: данные сохраняются между запусками, могут работать несколько человек, можно потом выложить в интернет. Но понадобится установить дополнительные программы, и запускать его нужно будет командой — я покажу как.»
+- «Не понимаю, объясните подробнее» — the fourth slot is free here, so the way out is a real option. This is the most consequential technical answer in the whole interview, so the explanation matters most here: two or three sentences on each of the two shapes, per `## Interview rules`, then this same question again. Say what each one gives them and what it costs them in practice — what they will be able to do with it, and what they will have to install or type. Nothing about languages, libraries or servers.
 - «Не знаю — решите сами» → take «файл двойным кликом», except when the conflict rule below applies — then take «настоящее приложение». Name the choice in one sentence, move on.
 
 Conflict rule: if the double-click file is chosen while any of these is true — Step 5 was «Много людей», Step 7 was «из нескольких мест» or named another system, Step 8 was «из интернета» or «потом из интернета» — name the conflict in one sentence, in plain words about what they will not be able to do, and recommend «настоящее приложение». Then do whatever the user decides.
@@ -219,13 +232,64 @@ If a plan changed a decision in the first part, say so there in one sentence, on
 
 Then wait for confirmation. Create no files before the user confirms. If the user changes something, redo the summary and ask again.
 
+What is confirmed here is that you understood the answers. What gets built is confirmed one step later, at Step 14, and the two are not merged: a person who nods at a correct retelling of their own words has not yet seen what you intend to make out of them.
+
 Include nothing about the Step 12 answer in the summary — it is not a thing to be built, and the user just gave it one turn ago.
 
-**Where the project will live.** Step 1 already looked: if it found the working directory occupied, or found it to be the user's home folder, the project goes into a subfolder named after it, in the Step 0 language. Create that subfolder before the first file is written, and do every bit of the work inside it — the scaffold, `CLAUDE.md`, the cheat sheet, `.claude/settings.local.json`, `.gitignore` and the version-control step all land there. Otherwise you build in place. Either way nothing at all is written before the user confirms.
+**Where the project will live.** Step 1 already looked: if it found the working directory occupied, or found it to be the user's home folder, the project goes into a subfolder named after it, in the Step 0 language. Create that subfolder as the very first action after Step 14 has been answered — before the first file is written and before version control runs, whichever of the two branches Step 14 took — and do every bit of the work inside it: the scaffold, `CLAUDE.md`, the cheat sheet, `.claude/settings.local.json`, `.gitignore`, the plan file if there is one, and every commit all land there. Otherwise you build in place. Either way nothing at all is written before Step 14 has been answered.
 
 Say it to the user in one plain sentence — this is one of the few technical facts worth stating, because they need to know where their files are: «Сделаю проект в отдельной папке "<имя>", чтобы ничего не перепутать».
 
 Never write `.claude/settings.local.json` into the home folder. That folder holds the user's own Claude Code settings, and settings written there would apply to every project they ever open.
+
+## Step 14. What I am about to build
+
+Own turn, and the last one before anything is created. Say what you are about to make, then ask whether to go.
+
+Step 13 retold the user's answers. This step says what will exist because of them — in your own words, in five or six short lines, no technical detail:
+
+- **Which screens there will be**, named the way the user would name them.
+- **Which parts of the interface, one by one. If Step 10 brought a ready-made design description, name every component it contains.** This is the most important line of the step and it is not optional. Such a description names things like a period picker, filters, a summary strip, a chart, a sortable table — and right now that text is the only place they exist. A part that was not said out loud here is a part that quietly does not get built, and the user finds out at the end. Name them, and they will tell you what is missing while it still costs nothing.
+- **Where the data will live**, in one plain phrase: «в файле рядом с проектом», «в базе, которая у вас уже запущена», «в самой странице, в браузере».
+- **What it is made on**, in three or four words — the name as a fact, not a justification and not a comparison.
+- **How it will be launched** — the double click, or one command you will show them.
+
+Then ask «Поехали?» with three options:
+
+- «Делаем прямо сейчас» → `## Generation`, unchanged.
+- «Сохраните план файлом — сделаю в другой сессии» → `## Saving the plan instead of building`, below.
+- «Не знаю — решите сами» → take «делаем прямо сейчас», name that choice in one sentence, and go.
+
+Rules for this step:
+
+- The plan is a statement, not a question, so it does not collide with the one-question-per-turn rule in `## Interview rules`: write it out as text and put the picker in the same turn, with «Поехали?» as the picker's question. Nothing is asked as free text here, so nothing can be lost.
+- Short and plain. No file names, no library names, no folder layout, no port numbers, no framework names — `## Tone rules` holds here as everywhere. The user is judging whether you understood what to make, not reviewing a design.
+- If the user corrects something, take the correction, say the plan back once more with the correction in it, and ask again. A correction here is cheap. The same correction after the build is not, which is the whole reason this step exists.
+- No explaining option here, per `## Interview rules`. This is not a question about their work — it is your plan, and if it is unclear the fix is to say it more plainly, not to explain it.
+- **Keep the list.** The screens and the parts you just named become the checklist `## Verification` walks item by item after the launch. That is the second job of this step: it turns a design sample into something that can be checked.
+
+## Saving the plan instead of building
+
+Only when Step 14 was answered «Сохраните план файлом». Do these four things, in order, and nothing else:
+
+1. **Write the plan file**, per `## Plan file` in `references/templates.md`. It is a full working document, not a summary: a session that knows nothing about this conversation has to be able to build the project from it alone. Never write «как обсуждали выше», or any other pointer back into this conversation — none of it survives.
+2. **Put the folder under version control**, per `## Version control` in `references/scaffolds.md`: the check for an outer project, `git init`, `.gitignore`, and one commit that contains the plan file. Write `.claude/settings.local.json` first, per `## Permissions` in `references/templates.md`, so those commands do not stop the user with approval prompts.
+3. **Print the short instruction** below.
+4. **Stop.** Build nothing, install nothing, launch nothing. There is nothing to verify, so `## Verification` does not run, and the instruction is the last thing you say — no final report on top of it.
+
+The instruction goes in the Step 0 language. This is reference wording: put it in your own voice, in the register chosen at Step 12, and wherever it says `ПЛАН.md` write the real name of the file you actually created. Keep it this short and keep all four facts.
+
+> План сохранён в файл ПЛАН.md, он лежит в папке проекта.
+>
+> Чтобы сделать приложение по нему:
+>
+> 1. Откройте новую сессию Claude Code в этой же папке.
+> 2. Наберите знак @ — появится список файлов. Выберите в нём ПЛАН.md.
+> 3. Рядом напишите: «сделай приложение по этому плану».
+>
+> Знак @ показывает файлы только из той папки, где открыта сессия. Если список не появился — вы открыли сессию не в той папке.
+
+The last paragraph is the one people need and the one that looks cuttable. Keep it: the `@` list is the only part of this that fails silently, and someone who opened the session one folder up cannot guess that from an empty list.
 
 ## Now and later
 
@@ -257,14 +321,17 @@ The rules:
 
 ## Generation
 
-Only after confirmation at Step 13. Fixed order, done in one pass, with no pauses for approval:
+Only after Step 14 was answered «делаем прямо сейчас». Fixed order, done in one pass, with no pauses for approval:
 
-1. Read `references/templates.md` and write `CLAUDE.md`, the human cheat sheet, and `.claude/settings.local.json`. Permissions come first on purpose: they must already be in place before the build runs any command, or the user is stopped by raw approval prompts in the middle of the work, which is exactly what `## Tone rules` forbids.
-2. Read `references/scaffolds.md` and build the project itself in the shape chosen at Step 9, on the base that file's rules select, with the look `## Design reference` prescribes.
-3. Reconcile the three written files with what was actually built. This step always runs — it is not a check you perform only when you suspect something changed. Re-open `CLAUDE.md`, the cheat sheet and `.claude/settings.local.json`, and compare, line by line, against what is now on disk and against the shape that actually got built: every file name, the launch command, every path, and every line in `allow`. Fix every mismatch in the written file, not in the project. The shape and the base can both change mid-run — the real-app build finds neither Python nor Node.js on the computer and the user accepts the single-file version instead — and then all three files are wrong: the documented launch command has to become the double-click instruction, and the lines that belonged to that base have to come out of `allow`. Do not launch anything until this is done. If any file ended up with a name other than the one promised in the Step 13 summary, tell the user, in one plain sentence naming both the promised name and the real one: «Файл, который я обещал назвать "<обещанное>", назвал "<фактическое>" — так понятнее». One sentence per renamed file, not a list of changes and not an apology. A better name is welcome; a silent one leaves the user holding a summary that no longer matches their folder.
-4. Launch the result and verify it, per `## Verification`.
-5. Put the project under version control, per `## Version control` in `references/scaffolds.md`. Never skip this on your own initiative — that section names the single case where no separate history is created, a project sitting inside a bigger project of the user's, and there the cheat sheet says so instead of promising «верни, как было».
-6. Give the final report, per `## Final report`.
+1. Read `references/templates.md` and write `.claude/settings.local.json`. Permissions come first on purpose: they must already be in place before anything below runs a command, or the user is stopped by raw approval prompts in the middle of the work, which is exactly what `## Tone rules` forbids.
+2. Read `references/scaffolds.md` and run the first part of `## Version control`: the check for an outer project, `git init`, `.gitignore`, and the first commit. **This is done before the project is built, not after it.** The first commit lands on an all-but-empty folder, and that is the point the user can come back to; a history that only starts once the build is finished has nothing to offer when the build went wrong. `.gitignore` is written here and nowhere else. Never skip version control on your own initiative — that section names the one case where no separate history is created, a project sitting inside a bigger project of the user's, and there the cheat sheet says so instead of promising «верни, как было».
+3. Write `CLAUDE.md` and the human cheat sheet from `references/templates.md`, then commit.
+4. Build the project itself in the shape chosen at Step 9, on the base the rules in `references/scaffolds.md` select, with the look `## Design reference` prescribes — then commit.
+5. Reconcile the three written files with what was actually built. This step always runs — it is not a check you perform only when you suspect something changed. Re-open `CLAUDE.md`, the cheat sheet and `.claude/settings.local.json`, and compare, line by line, against what is now on disk and against the shape that actually got built: every file name, the launch command, every path, and every line in `allow`. Fix every mismatch in the written file, not in the project. The shape and the base can both change mid-run — the real-app build finds neither Python nor Node.js on the computer and the user accepts the single-file version instead — and then all three files are wrong: the documented launch command has to become the double-click instruction, and the lines that belonged to that base have to come out of `allow`. Do not launch anything until this is done. If any file ended up with a name other than the one promised in the Step 13 summary, tell the user, in one plain sentence naming both the promised name and the real one: «Файл, который я обещал назвать "<обещанное>", назвал "<фактическое>" — так понятнее». One sentence per renamed file, not a list of changes and not an apology. A better name is welcome; a silent one leaves the user holding a summary that no longer matches their folder.
+6. Launch the result and verify it, per `## Verification` — then commit. That commit carries the fixes from step 5 as well.
+7. Give the final report, per `## Final report`.
+
+**A commit after every state that works, never one commit at the end.** Steps 2, 3, 4 and 6 each end in one, so the user can be taken back to the last point where something was whole instead of back to nothing. The commits themselves stay invisible: `## Version control` in `references/scaffolds.md` is the rule, and it says nothing is told to the user about any of this unless it was refused.
 
 Both files live in `references/` next to this one. Read them only at this stage — never during the interview.
 
@@ -278,11 +345,17 @@ Mandatory, not optional.
 - If it fails, fix it and launch again — up to three attempts, never showing the user the raw error. Report success only after a launch that worked.
 - If all three attempts fail, stop. Tell the user in plain language: what does not work, what already does work, what you will try next, and what they need to do (usually nothing — just keep talking to Claude). Never claim success, and never loop silently past three attempts.
 
+**Then walk the Step 14 list, item by item.** A launch that worked proves the project starts. It does not prove the project is the one that was promised, and one satisfied glance at the page is not a check. So take the screens and the parts you named at Step 14 and go through them one at a time: a period picker is checked by picking a period, a filter by filtering, a chart by looking at whether it drew, a sortable table by sorting it.
+
+- A missing item is not a launch failure and does not count against the three attempts. Build it, then check it again.
+- Never say «готово» while one item on that list is unchecked. This is what the list was made for: the parts named in a supplied design description are precisely what goes missing between the plan and the finished page.
+- Say nothing about the walk itself — `## Tone rules` bans narrating work in progress. The user hears the result, not the checking.
+
 ## Final report
 
-The last thing you say in the session, after version control has run — never earlier.
+The last thing you say in the session, after the launch check has passed and the last commit has been made — never earlier. It exists only in the branch that built something; `## Saving the plan instead of building` ends with its own instruction and gets no report on top of it.
 
 - In the user's language: what was built, where the files are, exactly how to launch it next time, exactly what to type to Claude to keep working on it, and what to do if something breaks. Point at the cheat sheet file for the details.
 - If the project went into a subfolder per `## Step 13`, name that folder here too, so the user knows where to look.
 - If there were plans at Step 4, one sentence: they are not built, they are written into the project's memory, and the next conversation about this project will already know about them. One sentence, no list — the list is in `CLAUDE.md`.
-- Last line, exactly once and without a salesy tone, this one sentence — reference wording, translated into the Step 0 language, with the address left exactly as written: «Этот плагин от Леонида, подписывайтесь на его канал https://t.me/financialpostpunk, там ещё много про вайб-кодинг для финансистов.» Nothing beyond this sentence, and never repeat the channel anywhere else in the session.
+- End on the work and nothing else. The last thing the user reads is what they now have and what to type next — no sign-off, no mention of who made this plugin, no channel, no invitation to subscribe to anything. That belongs in the plugin's own README, where someone choosing a plugin will see it, not at the end of a session someone came to for a working project.

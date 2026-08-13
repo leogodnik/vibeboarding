@@ -1,6 +1,6 @@
 # Scaffolds
 
-Read at generation time only, after Step 13 is confirmed. This file describes the two shapes a project can take, plus the procedures that run for both shapes.
+Read at generation time only, after Step 14 has been answered. This file describes the two shapes a project can take, plus the procedures that run for both shapes.
 
 How to use this file:
 
@@ -13,14 +13,17 @@ How to use this file:
 
 Order of operations, fixed:
 
-1. Write `CLAUDE.md`, the cheat sheet and `.claude/settings.local.json` from `references/templates.md` — first, so the permissions are in place before anything below runs a command.
-2. Build the shape — `## Single file` or `## Real app` — with the look `## Design reference` prescribes.
-3. Reconcile those three files with what actually got built — `## Launch and verify`, step 1. Always, not only when something looks off.
-4. `## Launch and verify` — the project must actually run.
-5. `## Version control` — only after the launch check has passed.
-6. Give the final report, per `## Final report` in `SKILL.md`.
+1. Write `.claude/settings.local.json` from `references/templates.md` — first, so the permissions are in place before anything below runs a command.
+2. `## Version control`, steps 1–4: the check for an outer project, `git init`, `.gitignore`, and the first commit — **before the project is built**, on an all-but-empty folder. That commit is the point the user can be brought back to.
+3. Write `CLAUDE.md` and the cheat sheet from `references/templates.md`, then commit.
+4. Build the shape — `## Single file` or `## Real app` — with the look `## Design reference` prescribes, then commit.
+5. Reconcile the three written files with what actually got built — `## Launch and verify`, step 1. Always, not only when something looks off.
+6. `## Launch and verify` — the project must actually run, and the list from Step 14 is then walked item by item. Then commit; that commit carries the fixes from step 5 too.
+7. Give the final report, per `## Final report` in `SKILL.md`.
 
-The folder to build in was already decided at `## Step 13` in `SKILL.md`, before the first file was written. Work in it and never move the project afterwards.
+Version control used to sit at the end of this list. It does not any more, and the reason is worth keeping in mind while you work: a history that starts only once everything is finished cannot rescue a build that went wrong halfway. Every step above that ends in a commit ends in one for that reason.
+
+The folder to build in was already decided at `## Step 13` in `SKILL.md` and created as the first action after Step 14. Work in it and never move the project afterwards.
 
 ## Single file
 
@@ -100,6 +103,16 @@ The store is decided here, silently, from three answers: how many people (Step 5
 - **Never install a database.** Not by yourself, and never by handing the user steps to run. There is no case in this plugin where a database gets installed — a project that works today beats an installation the person cannot finish.
 - Say nothing about the check either way. One everyday sentence about what the data lives in is enough, and in «С объяснениями» mode one analogy before it: «база данных — это как Excel-файл, только несколько человек могут писать в него одновременно и он не ломается».
 
+**With PostgreSQL, the data also has to survive a rollback.**
+
+A SQLite file sits inside the project folder and is committed along with everything else, which is why `## Version control` deliberately keeps it out of `.gitignore`: «верни, как было» brings the numbers back together with the code. PostgreSQL lives outside the folder and does not roll back with it. The user goes back to an earlier version and gets a working project with an empty screen — which, to them, is simply a project that broke.
+
+So when PostgreSQL was the store:
+
+- **Write a seeding script into the project and commit it** — `seed.py` for Python, `seed.js` for Node.js. It creates the tables through the query layer and puts in a little demo data: enough for every screen to have something on it, and no more. Write it so that running it on a database that already has rows adds nothing and removes nothing — a script that wipes the user's data is a worse problem than the one it was written to solve.
+- **Run it once yourself** during `## Launch and verify`, before the launch check, so the check has something to show on screen and so the script is known to work. Never document a script you have not run.
+- **Add one plain line to the cheat sheet** saying what to run to fill an empty database, per `## Cheat sheet` in `references/templates.md`. One line. Do not explain why it happens and do not describe how the database works.
+
 **Always through a query layer. This is the part that matters.**
 
 - Every table, every read and every write goes through a query layer that is not tied to one engine: **SQLAlchemy** for Python, **Knex** for Node.js.
@@ -166,16 +179,17 @@ Mandatory for both shapes. The project is not finished until it has been launche
 
 2. Launch the result yourself. Never write "готово" without having run it.
 3. **Single file:** open it in the default browser — `open "<name>.html"` on macOS, `start "" "<name>.html"` on Windows, `xdg-open "<name>.html"` on Linux. Confirm the page renders and that the main action actually works: the number is calculated, the file loads, the entry is saved and is still there after a reload.
-4. **Real app:** install the extra programs the ordinary way for the chosen base — `npm install`, or a `.venv` and `pip install` — then start the app with the one documented launch command, open the browser at the documented address, and confirm the page renders and the main action works.
+4. **Real app:** install the extra programs the ordinary way for the chosen base — `npm install`, or a `.venv` and `pip install`. If the store is PostgreSQL, run the seeding script from `### Data` now, so the screens have something on them. Then start the app with the one documented launch command, open the browser at the documented address, and confirm the page renders and the main action works.
 5. **If it fails:** fix it and launch again — up to three attempts. Do not report the failure to the user unless it needs a decision only they can make, and then in plain language, never as a raw error message, stack trace or exit code.
 6. **After three failed attempts, stop.** Tell the user in plain language: what does not work, what already does work, and what you will try next. Never claim success, and never keep looping past three attempts.
-7. Only after a launch that worked: run `## Version control`, then report success and describe exactly what the user should see on screen.
+7. **Then walk the list from Step 14** — every screen and every part you named there, one at a time, per `## Verification` in `SKILL.md`. A launch that worked only proves the project starts. Something missing from that list is built now and checked again; it does not count against the three attempts above.
+8. Only after a launch that worked and a list with nothing left unchecked: make the commit from step 5 of `## Version control`, then report success and describe exactly what the user should see on screen.
 
 ## Version control
 
 Mandatory for both shapes, and invisible to the user. It exists so the cheat sheet is telling the truth: it promises that «Верни, как было до последних изменений» works, and that promise is empty if nothing was ever saved. There is exactly one case where no history is created — step 1 below — and there the cheat sheet drops the promise instead.
 
-Run this after the project files exist and after the launch check in `## Launch and verify` has passed — a snapshot is only useful if it is a snapshot of something that works.
+**This runs before the project is built, not after it.** Steps 1–4 — the check, `git init`, `.gitignore`, the first commit — come first, while the folder is still all but empty, and that first commit is the point the user can be brought back to. Then step 5 adds a commit after each state that works. The old order, one commit at the very end, left a hole: if the build went somewhere wrong there was nothing to return to, because no clean-folder point had ever existed.
 
 1. **First find out whether this project already sits inside one of the user's own projects.** From the project folder, before initialising anything:
 
@@ -183,7 +197,7 @@ Run this after the project files exist and after the launch check in `## Launch 
    git rev-parse --is-inside-work-tree
    ```
 
-   If that says the folder is already inside a repository, this project lives inside a bigger project of theirs — which is what happens when Step 1 was answered «Сделать новый проект рядом» in a folder that was already under version control. Then this project gets **no separate history**: skip `git init` in step 2, skip the commit in step 4, and touch the outer project in no way at all — nothing written to its `.gitignore`, nothing written under its `.git/`. A history inside a history is worse than none: the outer project records this folder as a broken reference, and a copy of the outer project comes out with the new work missing entirely, which is not something this user can repair. Skipping here is a deliberate choice, not a failure, so say nothing about it — but the cheat sheet must not promise what is not there, so its «Если что-то сломалось» step three is written per the note in `references/templates.md` for a project without its own history.
+   If that says the folder is already inside a repository, this project lives inside a bigger project of theirs — which is what happens when Step 1 was answered «Сделать новый проект рядом» in a folder that was already under version control. Then this project gets **no separate history**: skip `git init` in step 2, skip the first commit in step 4 and every commit in step 5, and touch the outer project in no way at all — nothing written to its `.gitignore`, nothing written under its `.git/`. A history inside a history is worse than none: the outer project records this folder as a broken reference, and a copy of the outer project comes out with the new work missing entirely, which is not something this user can repair. Skipping here is a deliberate choice, not a failure, so say nothing about it — but the cheat sheet must not promise what is not there, so its «Если что-то сломалось» step three is written per the note in `references/templates.md` for a project without its own history.
 
 2. **Create the local history** — only when step 1 found this folder is not already inside another project, and unless the project root already contains a `.git` folder. In the project root, run:
 
@@ -193,27 +207,53 @@ Run this after the project files exist and after the launch check in `## Launch 
 
    Only ever in the project folder chosen at `## Step 13` — never in a parent folder, and never in the user's home folder. `## Step 13` already guaranteed that folder is neither the home folder nor a folder full of the user's other things, so there is nothing to move and no path to rewrite here. Apart from the one case in step 1, never skip version control: skipping it hollows out the «верни, как было» promise the cheat sheet makes.
 
-3. **Write `.gitignore`** in the project root — in both cases, whether or not this project got a history of its own; it is a file inside the project folder, and the outer project's own `.gitignore` is still never touched. It must contain at least these two lines:
+3. **Write `.gitignore`** in the project root — in both cases, whether or not this project got a history of its own; it is a file inside the project folder, and the outer project's own `.gitignore` is still never touched. This is the only place `.gitignore` is written. It must contain at least these lines, all of them, before the first commit:
 
    ```gitignore
    .claude/settings.local.json
    .DS_Store
+   .env
+   .env.*
+   !.env.example
+   *-service-account.json
+   credentials.json
    ```
 
-   Add what the built base needs on top: `node_modules/` for Node.js; `.venv/` and `__pycache__/` for Python. A local SQLite file is the user's data — never put it in `.gitignore`. If the permissions step from `references/templates.md` already created `.gitignore` with the single `.claude/settings.local.json` line, add the missing lines to that same file — do not create a second one.
+   **Why the secret lines are not optional, and why they go in before the first commit.** A secret that gets into the history of changes stays there for good: deleting the file in a later commit does not take it out of the earlier ones, and from that moment on the key has to be treated as given away. There is no tidying up afterwards. And this audience's projects do reach for keys — a project that goes to another system for its data needs a token to get in, and that token lives in `.env`. The lines cost nothing today and cannot be added late, so they go in now, before there is a single commit to be sorry about.
 
-4. **Make one initial commit** containing everything — skipped entirely when step 1 found this folder inside another project:
+   **`.env.example`.** If the project uses `.env`, write an `.env.example` next to it with the same keys and empty values. That file is committed — the `!.env.example` line above is what lets it through — and it is the sample: it shows a later session, or the same person on another computer, exactly which values have to be filled in. Never put a real value in it.
+
+   Add what the built base needs on top: `node_modules/` for Node.js; `.venv/` and `__pycache__/` for Python.
+
+   **A local SQLite file is the user's data — never put it in `.gitignore`.** That is deliberate: the data then rolls back together with the code, and «верни, как было» gives the user back a working project with their numbers in it. When the store is PostgreSQL instead, the data lives outside the folder and this no longer holds — `### Data` says what is done about that.
+
+4. **Make the first commit — the point of return.** Skipped entirely when step 1 found this folder inside another project.
 
    ```bash
    git add -A
-   git commit -m "<message in the user's language, e.g. «Первая рабочая версия»>"
+   git commit -m "<message in the user's language, e.g. «Начало работы над проектом»>"
    ```
+
+   The folder holds almost nothing at this moment — `.gitignore`, and the plan file if `## Saving the plan instead of building` in `SKILL.md` sent us here. That is the whole point: it is a clean state that is guaranteed to be intact, and everything after it can be undone back to here. `.gitignore` always exists by now, so this commit never has nothing to record.
 
    If the commit fails only because a name and an email are not configured, set them locally for this project folder with a neutral value and commit again. Do not ask the user for them.
 
-5. **Say nothing about any of this — unless it was blocked.** Do not narrate it, do not list it in the final report, and never use the word «репозиторий» with the user — `## Tone rules` bans it. In the cheat sheet this shows up only as the fact that «Верни, как было до последних изменений» works — or, in the step-1 case, does not appear at all. The one exception is the blocked-action rule in `## Tone rules` of `SKILL.md`: if `git init`, `git add` or the commit is denied or refused, never quietly skip the step and carry on. Say in plain words that the history of changes was not saved and that «вернуть предыдущую версию не получится» — the cheat sheet promises it, and silence would leave that promise empty. That rule is about a denial only; the skip in step 1 is not one, and is never announced.
+5. **Then a commit after every state that works** — not one commit at the end. Each of these is skipped along with the rest when step 1 found this folder inside another project:
 
-6. **Local only.** Never run `git push`, never add a remote, never mention GitHub, never ask whether the user wants to publish — including when Step 8 said the project will one day live on the internet. That is a separate piece of work for a later conversation, and Step 8 already told the user so. The `ask` rule on `Bash(git push:*)` in the permissions template is a guard rail, not an invitation to use it.
+   - after `CLAUDE.md` and the cheat sheet have been written;
+   - after the project itself has been built;
+   - after the launch check in `## Launch and verify` has passed and the Step 14 list has been walked — this one also carries the fixes the reconciliation step made to the three written files.
+
+   ```bash
+   git add -A
+   git commit -m "<one short line in the user's language, saying what now exists>"
+   ```
+
+   Each message is one plain line about what the project has now, in the user's language: «Памятка и шпаргалка», «Страница расходов работает». Never `git commit --amend`, never `git rebase`, never anything that rewrites what is already committed — an earlier point the user can return to is worth more than a tidy history.
+
+6. **Say nothing about any of this — unless it was blocked.** Do not narrate it, do not list it in the final report, and never use the word «репозиторий» with the user — `## Tone rules` bans it. In the cheat sheet this shows up only as the fact that «Верни, как было до последних изменений» works — or, in the step-1 case, does not appear at all. The one exception is the blocked-action rule in `## Tone rules` of `SKILL.md`: if `git init`, `git add` or any of the commits is denied or refused, never quietly skip the step and carry on. Say in plain words that the history of changes was not saved and that «вернуть предыдущую версию не получится» — the cheat sheet promises it, and silence would leave that promise empty. That rule is about a denial only; the skip in step 1 is not one, and is never announced.
+
+7. **Local only.** Never run `git push`, never add a remote, never mention GitHub, never ask whether the user wants to publish — including when Step 8 said the project will one day live on the internet. That is a separate piece of work for a later conversation, and Step 8 already told the user so. The `ask` rule on `Bash(git push:*)` in the permissions template is a guard rail, not an invitation to use it.
 
 ## Never add
 
@@ -221,7 +261,7 @@ Not in either shape, no matter how tempting or how standard it looks elsewhere:
 
 - Git hooks of any kind.
 - A documentation gate, or any rule that blocks work until a document is updated.
-- A `docs/` tree, architecture decision records, or design documents. The project has `CLAUDE.md`, one cheat sheet, and — only when the user gave a long sample at Step 10 — `design.md`. Nothing else.
+- A `docs/` tree, architecture decision records, or design documents. The project has `CLAUDE.md`, one cheat sheet, and nothing beyond what the interview actually produced: `design.md` when the user gave a long sample at Step 10, the plan file when Step 14 was answered «сохраните план файлом», `.env.example` when the project uses `.env`, and the seeding script when the store is PostgreSQL. Never a document written for its own sake.
 - A methodology or process layer on top of the project.
 - A monorepo, workspaces, or more than one dependency manifest.
 - Separate data isolation per customer.
