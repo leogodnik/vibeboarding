@@ -1,99 +1,154 @@
 # Scaffolds
 
-Read at generation time only, after Step 9 is confirmed. This file describes the two shapes a project can take, plus the two procedures that run for both shapes.
+Read at generation time only, after Step 13 is confirmed. This file describes the two shapes a project can take, plus the procedures that run for both shapes.
 
 How to use this file:
 
-- Build exactly one shape — the one chosen at Step 6. Never both, never a mix.
+- Build exactly one shape — the one chosen at Step 9. Never both, never a mix.
 - These instructions are English. Everything the user ends up seeing — file names, on-screen labels, comments in the code, commit messages — is written in the language picked at Step 0.
 - Russian text here is reference wording, not literal output. Translate it into the Step 0 language, keeping the meaning and roughly the length. If Step 0 is Русский, use it as written.
 - `<angle brackets>` mark a placeholder you replace with the real value. Never write the brackets into a generated file.
-- `## Tone rules` from `SKILL.md` applies to every word the user reads, in the register chosen at Step 8: short sentences always, and — unless the user asked for technical terms — no jargon and never a raw error message.
+- `## Tone rules` from `SKILL.md` applies to every word the user reads, in the register chosen at Step 12: short sentences always, and — unless the user asked for technical terms — no jargon and never a raw error message.
+- Nothing in this file is a question. Every choice below is made from the interview answers and from what is already on the computer. `## Generation` promises one pass with no pauses; asking here breaks that promise.
 
 Order of operations, fixed:
 
 1. Write `CLAUDE.md`, the cheat sheet and `.claude/settings.local.json` from `references/templates.md` — first, so the permissions are in place before anything below runs a command.
-2. Build the shape — `## Single file` or `## Real app`.
+2. Build the shape — `## Single file` or `## Real app` — with the look `## Design reference` prescribes.
 3. Reconcile those three files with what actually got built — `## Launch and verify`, step 1. Always, not only when something looks off.
 4. `## Launch and verify` — the project must actually run.
 5. `## Version control` — only after the launch check has passed.
 6. Give the final report, per `## Final report` in `SKILL.md`.
 
-The folder to build in was already decided at `## Step 9` in `SKILL.md`, before the first file was written. Work in it and never move the project afterwards.
+The folder to build in was already decided at `## Step 13` in `SKILL.md`, before the first file was written. Work in it and never move the project afterwards.
 
 ## Single file
 
-Chosen at Step 6: «Файл, который открывается двойным кликом».
+Chosen at Step 9: «Файл, который открывается двойным кликом».
 
 **Shape.** One self-contained HTML file in the project root. Nothing else is needed to run it.
 
 - Name it in the user's language, after what the project actually does: `Мои расходы.html`, `Калькулятор кредита.html`. Spaces are fine — the user double-clicks the file and never types its name.
 - Use that exact name, character for character, in `CLAUDE.md` «Как запустить» and in the cheat sheet. Three different spellings of the file name is the most common way this shape breaks. `CLAUDE.md` and the cheat sheet are written before this file exists, so settle on the name first and then use it unchanged. `## Launch and verify`, step 1, checks all three against each other and is where a drifted name gets fixed.
-- No `package.json`, no build step, no install step, nothing to run in a terminal. This is the «single-file shape» in `references/templates.md` → `## Permissions`: drop the two `npm` lines — `"Bash(npm install:*)"` and `"Bash(npm run:*)"` — from `allow`, keep the rest of `allow`, and leave `deny` and `ask` exactly as written there.
+- No dependency manifest, no build step, no install step, nothing to run in a terminal. This is the «single-file shape» in `references/templates.md` → `## Permissions`: write the base `allow` list and add nothing to it.
 
-**Self-contained means offline.** Markup, styles and script all live inside that one file, in `<style>` and `<script>` tags.
+**Self-contained means offline.** This is the one shape where that rule holds. Markup, styles and script all live inside that one file, in `<style>` and `<script>` tags.
 
 - No `<link>` or `<script src>` pointing at a CDN, a font service or any other address. No `import` from a URL, no `fetch` to the internet.
 - The file must render correctly with the network switched off, and it must still work if it is copied to another computer or emailed to a colleague.
 - Always set `<meta charset="utf-8">` and `<html lang="<Step 0 language code>">`, so non-Latin text renders.
+
+**Offline is not an excuse to cut features.** This rule is about where the code comes from, never about what the page can do. A period picker, filters, charts, sortable tables, a summary strip — all of them are perfectly buildable by hand in one file with plain HTML, CSS and inline SVG or `<canvas>`, and if the user asked for one, you build it. Never quietly drop something the person described or showed, and never offer a poorer page than they asked for because a library would have been easier.
+
+The only things that genuinely cannot exist here are a font you do not have on the computer, a picture you were not given, and anything that needs live data from the internet or a server. When one of those is what the user wanted, say so in one plain sentence in the final report and offer the «настоящее приложение» version — do not silently approximate it.
 
 **Data that has to survive.** If the user needs their data to still be there next time they open the file, store it in the browser's `localStorage`.
 
 - Handle the first run, when there is nothing stored yet, without an error on screen.
 - Warn the human once, in one plain sentence in the cheat sheet: the data lives in this browser on this computer — so it is not on another computer, and clearing the browser's history erases it. One sentence, no lecture, no talk of storage engines.
 
-**A file from Step 5.** If the user has an Excel or CSV file:
+**A file from Step 7.** If the user has an Excel or CSV file:
 
 - Put a file-choosing button on the page itself, read the file with `FileReader` in the browser, parse it in the page. No server, no upload, the file never leaves the computer.
-- CSV is read directly. A `.xlsx` file cannot be parsed without an outside library, and outside libraries are banned in this shape — so build the page to read CSV, and add one step to the cheat sheet's «Как запустить» telling the user in plain words to save their Excel file as CSV first («Файл → Сохранить как → CSV»). Take this branch without stopping to ask: `## Generation` promises one pass with no pauses for approval. Mention in the final report, in one sentence, that Excel files need that one save-as step — and if the user would rather not have it, they can ask for the «настоящее приложение» version later.
+- CSV is read directly. A `.xlsx` file cannot be parsed without an outside library, and outside libraries cannot exist in a file that has to open offline by itself — so build the page to read CSV, and add one step to the cheat sheet's «Как запустить» telling the user in plain words to save their Excel file as CSV first («Файл → Сохранить как → CSV»). Take this branch without stopping to ask. Mention in the final report, in one sentence, that Excel files need that one save-as step — and that the «настоящее приложение» version reads `.xlsx` directly, if they would rather not have it.
 
 **Interface.** Large readable font. Plain labels in the Step 0 language — never leave English words on screen when the language is not English. Works on a narrow phone screen: a `<meta name="viewport">` tag, no fixed pixel widths, nothing cut off at the edge.
 
-**The look chosen at Step 7 governs the visual treatment** — colours, spacing, type sizes, how much decoration there is:
+**The look** is governed by `## Design reference` — the Step 10 sample if there was one, otherwise the Step 11 answer.
+
+## Real app
+
+Chosen at Step 9: «Настоящее приложение».
+
+### Choosing the base
+
+The language and the base are chosen here, from the answers and from what is on the computer. There is no default language and nothing is hardwired. The user is never asked and never sees the question.
+
+1. **Read what the project actually does**, from Step 3 and Step 7:
+   - Numbers, tables, files, reports, calculations, reading Excel or CSV, anything the person already does in a spreadsheet → **Python**.
+   - A busy interface — many screens, a lot of live interaction, something meant to be used by many people in a browser → **Node.js**.
+2. **If both fit, take the one that is already installed.** Check without asking: `python3 --version`, `node --version`. If both are installed, take Python: this audience already writes Python for their spreadsheets, and code they can read is worth more to them than code you find tidier.
+3. **If the one you chose is missing and the other one is there** and can do the job — take the one that is there, silently. Never make the user install something to satisfy a preference of yours.
+4. **If neither is there** — do not paste an installation manual and do not show the raw error. Say in one plain sentence what has to be installed once, give the direct link (`https://www.python.org/downloads/` for Python, `https://nodejs.org` for Node.js), and offer to build the `## Single file` version right now so the user sees a working result today. Then do whatever they choose. If they take the single-file version, the shape has changed after `CLAUDE.md`, the cheat sheet and `.claude/settings.local.json` were already written for a real app — `## Launch and verify`, step 1, is mandatory and is where all three get fixed.
+5. **State the choice in one sentence, never as a question**: «Сделаю на Питоне — на нём же вы пишете скрипты к таблицам». In «С объяснениями» mode, one everyday analogy first.
+
+**Frameworks: one, well known, boring.** Python → Flask or FastAPI with server-rendered templates; Streamlit is fine when the project really is a dashboard and nothing else. Node.js → Express with a plain front end, or Vite with React when the interface genuinely has many moving parts. Never a second framework on top of the first.
+
+### Shape
+
+The smallest project that does the job.
+
+- One dependency manifest in the project root: `package.json` for Node.js, `requirements.txt` (or `pyproject.toml`) for Python. Not a monorepo: no workspaces, no `packages/` folder, no second manifest anywhere.
+- Pick one fixed port and write the address literally — `http://localhost:3000` for Node.js, `http://localhost:8000` for Python. Never let the port float between runs.
+
+### The launch command
+
+- **Exactly one command, and it is the real one.** Never document a command you have not run yourself. Whatever `## Launch and verify` actually used is what goes into the files.
+- It must work from the project folder as a **single line, with nothing to activate or set up first**. A Python project with its own extra programs means a virtual environment in `.venv`, and the documented command uses that interpreter directly: `.venv/bin/python app.py`, or `.venv/bin/streamlit run app.py` (on Windows `.venv\Scripts\python app.py`). Never document «сначала активируйте окружение» — that is a second command and a second thing to get wrong.
+- Node.js: `package.json` gets a `start` script that really launches the finished project — not a placeholder, not an alias for a build step — and the documented command is `npm start`. A `dev` script may exist for your own use; it is never shown to the user and never named in a generated file.
+- **Write that one command, character for character, into `CLAUDE.md` «Как запустить» and into the cheat sheet**, and use exactly it in `## Launch and verify`. Three different spellings of the launch command is how this shape breaks.
+- Exactly one way to launch. Never write «или так, или так» — a second option is a second thing that can go wrong.
+
+### Data
+
+The store is decided here, silently, from three answers: how many people (Step 5), how many sources (Step 7), and where it will live (Step 8).
+
+**The store.**
+
+- **SQLite** is the default: one file next to the project, nothing to install, nothing to start, nothing that can fail to connect. It covers almost everything this audience asks for, including several people using the project on one computer.
+- **PostgreSQL** — only if it is **already running on this computer**. Check it, do not ask: `pg_isready`, or one connection attempt on the default port. Running → use it, create the project's own database inside it. Not running, not installed, refuses → SQLite, silently.
+- **Never install a database.** Not by yourself, and never by handing the user steps to run. There is no case in this plugin where a database gets installed — a project that works today beats an installation the person cannot finish.
+- Say nothing about the check either way. One everyday sentence about what the data lives in is enough, and in «С объяснениями» mode one analogy before it: «база данных — это как Excel-файл, только несколько человек могут писать в него одновременно и он не ломается».
+
+**Always through a query layer. This is the part that matters.**
+
+- Every table, every read and every write goes through a query layer that is not tied to one engine: **SQLAlchemy** for Python, **Knex** for Node.js.
+- No SQL written for one engine's dialect: no `SERIAL`, no Postgres-only types, no SQLite-only tricks, no hand-built strings for one and not the other.
+- The connection address lives in **exactly one place** — one line in one file. Moving from SQLite to a real database is then that one line plus copying the data across, not a rewrite.
+- Because of this, the answers that point at a real database — several sources at Step 7, several people at Step 5, «из интернета» at Step 8 — cost nothing when no database is running. Build on SQLite and write one line into `CLAUDE.md` «Что учесть потом»: the data work is written so the base can be swapped, and moving to a real database is a settings change, not a rebuild. It is a note, not a debt. Never show a connection error, never mention a port, never present this as a compromise.
+
+**Logins and rights.**
+
+- Step 5 «Я и ещё несколько человек» → one simple shared login.
+- Step 5 «Много людей» → a separate login per person, but one application and one data store. No isolation layer, no separate schema or database per customer.
+- Step 6 «Кто-то только смотрит, кто-то вносит» → exactly two kinds of user: one who can look at everything, one who can also enter and change. Nothing more elaborate, and never a permission system the interview did not ask for.
+
+### Interface
+
+**Ready-made parts are allowed here, and expected.** This shape has an install step, so the reason the single file has none of them does not apply.
+
+- Everything the person asked for gets built: a period picker, filters, charts, sortable tables, forms, an export. Never drop one of these to keep the project small — the interview asked for it, and a smaller project that does not do the job is not the simpler option.
+- Use ordinary, well-known, boring libraries for those parts. One charting library, one set of interface parts — not three of each, and never a second one doing the same job as the first.
+- The bar that stays: nothing added for what plain HTML already does; no design system dragged in for one button; no state library for one screen; nothing at all that the interview did not ask for. Fewer moving parts, but never fewer features than the person described.
+- Libraries are installed into the project the ordinary way — `npm install`, or `pip install` into `.venv` — and never pulled from a CDN when the page opens. The finished app has to keep working when the network is flaky. Same for fonts: ship the file inside the project or use what is already on the computer.
+- An `.xlsx` file from Step 7 is read directly here, with a library. No save-as-CSV step in this shape.
+- Large readable font. Plain labels in the Step 0 language — never leave English words on screen when the language is not English. Works on a narrow phone screen: no fixed pixel widths, nothing cut off at the edge.
+
+**The look** is governed by `## Design reference`.
+
+## Design reference
+
+Applies to both shapes. Two jobs: apply what the person actually gave, and make sure it survives past this session.
+
+**If a sample was given at Step 10**, it is one of four kinds, and all four carry the same weight. None of them is a weaker form of another.
+
+- **A link** to a site or a program. Do not open it and do not fetch it. What you use is what the user said about it, plus the genre the name suggests. Do not ask them to explain it further.
+- **A picture in the project folder.** Open it and look at it before you write a single line of the interface — not after. Take the layout, the colours, the type sizes, the density, how much decoration there is.
+- **A ready-made design description from another tool.** Treat it as instructions and follow them point by point. Never compress it into «в спокойных тонах» and then build your own thing — that is the same as losing it. Ignore only the parts that genuinely cannot exist in the chosen shape (a web font in a file that must open offline), and say which part that was, in one plain sentence, in the final report.
+- **Their own words.** Exactly the same weight as everything above. Follow them literally: if they said «как в банковском приложении, только без рекламы», that is a brief.
+
+**If no sample was given**, the Step 11 answer governs the visual treatment — colours, spacing, type sizes, how much decoration there is:
 
 - «Строго, по-деловому» — restrained business-report styling: near-white background, dark text, one accent colour, thin dividing lines, aligned columns, numbers right-aligned. No rounded cards, no gradients, no emoji.
 - «Мягко и спокойно» — calm everyday styling: soft muted background, generous spacing, gently rounded corners, one warm accent, nothing shouty. It is opened every day, not presented once.
 - «На ваш вкус» — your own tasteful default: simple, tidy, well spaced, one accent colour, and nothing competing with the numbers.
-- A reference was given at Step 7 (a link, a screenshot in the project folder, or a description in words) — follow it as far as one self-contained file allows: layout, colours, type sizes, overall tone. Whatever cannot be reproduced here — a web font, an image you do not have, something that would need a server — say so in one plain sentence in the final report instead of silently approximating it.
 
-None of this bends the rules above: no external links, no web fonts, no CDN. The file must still render with the network switched off, so use a plain system font stack and write the colours into the file.
+**The sample has to outlive the conversation.** Write it down before you build — a sample that only ever existed in the chat is gone the moment the session ends, and the next conversation will restyle the project against it.
 
-## Real app
-
-Chosen at Step 6: «Настоящее приложение».
-
-**Check Node.js before you build anything.** Run `node --version`.
-
-- If it is there, continue.
-- If it is not, do not paste an installation manual and do not show the raw error. Say in one plain sentence what has to be installed once, give the direct link `https://nodejs.org`, and offer to build the `## Single file` version right now so the user sees a working result today. Then do whatever they choose.
-- If they take the single-file version, the shape has changed after `CLAUDE.md`, the cheat sheet and `.claude/settings.local.json` were already written for a real app. Build the single-file shape, then correct all three in `## Launch and verify`, step 1 — that step is mandatory and is where this gets fixed.
-
-**Shape.** The smallest project that does the job.
-
-- One `package.json` in the project root. Not a monorepo: no workspaces, no `packages/` folder, no second `package.json` anywhere.
-- `package.json` has the scripts `dev` and `start`.
-- **The documented launch command is always `npm start`.** That is the one command written into `CLAUDE.md` «Как запустить» and into the cheat sheet, in every real-app project, with no exceptions. `dev` may exist in `package.json` for your own use, but it is never shown to the user and never named in a generated file.
-- So `start` in `package.json` must be the script that actually launches the finished project — not a placeholder, not an alias for a build step.
-- Exactly one way to launch. Document only `npm start` and never write «или так, или так» — a second option is a second thing that can go wrong.
-- As few outside libraries as possible. Prefer what Node already has built in. Every added library is something the user will one day have to reinstall.
-- Pick one fixed port and write the address literally — `http://localhost:3000`. Never let the port float between runs.
-
-**Data.** The simplest storage that closes the task, and no more.
-
-- A JSON file on disk or a single local SQLite file covers almost everything this audience asks for.
-- Stand up a real database server only if the task genuinely cannot work without one. In that case you start it and verify it works yourself — the user never gets install steps to run by hand, and never sees a connection error.
-- If Step 4 was «Внешние люди», give each person their own login, but keep one application and one data store. No tenant isolation layer, no separate schema or database per customer.
-
-**Interface.** Large readable font. Plain labels in the Step 0 language — never leave English words on screen when the language is not English. Works on a narrow phone screen: no fixed pixel widths, nothing cut off at the edge.
-
-**The look chosen at Step 7 governs the visual treatment** here exactly as in `## Single file`:
-
-- «Строго, по-деловому» — restrained business-report styling: near-white background, dark text, one accent colour, thin dividing lines, aligned columns, numbers right-aligned. No rounded cards, no gradients, no emoji.
-- «Мягко и спокойно» — calm everyday styling: soft muted background, generous spacing, gently rounded corners, one warm accent, nothing shouty.
-- «На ваш вкус» — your own tasteful default: simple, tidy, well spaced, one accent colour, and nothing competing with the numbers.
-- A reference was given at Step 7 — follow it as far as this project allows, and say in one plain sentence in the final report whatever could not be reproduced, instead of silently approximating it.
-
-The offline rules hold here too: no CDN, no web font service, no external links. Ship the styles inside the project and use fonts already on the computer — the app has to work with no internet.
+- **Short — up to about three lines:** one line at the end of `CLAUDE.md` «О проекте»: «Оформление — по образцу, который дал пользователь: <ссылка / имя файла / в двух словах>».
+- **Longer — a ready-made design description usually is:** save it word for word as `design.md` in the project root, and add one line for it to `CLAUDE.md` «Где что лежит»: «`design.md` — образец оформления, по которому сделан внешний вид». Never rewrite, summarise or tidy the text on the way in.
+- **A picture** stays exactly where the user put it — never moved, never renamed — and gets the same one line in «Где что лежит».
+- `design.md` keeps that name in every language: it is a file name, and `## Language policy` in `SKILL.md` never translates those. Its contents are the user's, unchanged.
 
 ## Launch and verify
 
@@ -101,17 +156,17 @@ Mandatory for both shapes. The project is not finished until it has been launche
 
 1. **Reconcile the three written files with what is actually on disk. This step is mandatory and runs every time — never treat it as a check to skip when nothing seems to have changed.** `CLAUDE.md`, the cheat sheet and `.claude/settings.local.json` were written before the build, from the plan, so nothing guarantees they describe the project that now exists. Re-open all three and compare against reality:
 
-   - Every file name, character for character — the HTML file the user double-clicks, and every file listed in «Где что лежит». The launch check below opens the file that exists, so a wrong name in the cheat sheet passes verification silently and leaves the user with a lifeline document that points at nothing.
-   - Every command, character for character — the documented launch command against the `start` script that is really in `package.json`, and any extra step the build added (for example the xlsx→CSV save-as step from `## Single file`, which has to be written into the cheat sheet's «Как запустить» now, not assumed to be there).
-   - Every line of `allow` in `.claude/settings.local.json` against the shape that was actually built.
+   - Every file name, character for character — the HTML file the user double-clicks, `design.md` if there is one, and every file listed in «Где что лежит». The launch check below opens the file that exists, so a wrong name in the cheat sheet passes verification silently and leaves the user with a lifeline document that points at nothing.
+   - The launch command, character for character — what is written in `CLAUDE.md` and in the cheat sheet against the command you actually ran, and any extra step the build added (for example the xlsx→CSV save-as step from `## Single file`, which has to be written into the cheat sheet's «Как запустить» now, not assumed to be there).
+   - Every line of `allow` in `.claude/settings.local.json` against the shape and the base that were actually built — the Node.js lines have no business in a Python project and the other way round.
 
-   **The shape itself can change mid-run.** The real-app build runs `node --version` after these three files are already written; if Node.js is missing and the user takes the offered `## Single file` version, all three describe a project that was never built. Then this step rewrites them: «Как запустить» becomes the double-click instruction instead of `npm start`, «Где что лежит» lists the HTML file, and the two `npm` lines — `"Bash(npm install:*)"` and `"Bash(npm run:*)"` — come out of `allow`. Fix the written files; never bend the project to match a stale document.
+   **The shape and the base can both change mid-run.** The real-app build looks for Python and Node.js after these three files are already written; if neither is there and the user takes the offered `## Single file` version, all three describe a project that was never built. Then this step rewrites them: «Как запустить» becomes the double-click instruction instead of a command, «Где что лежит» lists the HTML file, and the base's lines come out of `allow`. Fix the written files; never bend the project to match a stale document.
 
-   Say nothing to the user about any of this, with one exception. It is bookkeeping, and `## Tone rules` bans narrating work in progress. The exception is a file that ended up with a name other than the one promised in the Step 9 summary: say so in one plain sentence naming both the promised name and the real one — «Файл, который я обещал назвать "<обещанное>", назвал "<фактическое>" — так понятнее». One sentence per renamed file, not a list of changes and not an apology. A better name is welcome; a silent one leaves the user holding a summary that no longer matches their folder.
+   Say nothing to the user about any of this, with one exception. It is bookkeeping, and `## Tone rules` bans narrating work in progress. The exception is a file that ended up with a name other than the one promised in the Step 13 summary: say so in one plain sentence naming both the promised name and the real one — «Файл, который я обещал назвать "<обещанное>", назвал "<фактическое>" — так понятнее». One sentence per renamed file, not a list of changes and not an apology. A better name is welcome; a silent one leaves the user holding a summary that no longer matches their folder.
 
 2. Launch the result yourself. Never write "готово" without having run it.
 3. **Single file:** open it in the default browser — `open "<name>.html"` on macOS, `start "" "<name>.html"` on Windows, `xdg-open "<name>.html"` on Linux. Confirm the page renders and that the main action actually works: the number is calculated, the file loads, the entry is saved and is still there after a reload.
-4. **Real app:** install the dependencies with `npm install`, start the app with `npm start` — the one documented command — open the browser at its address, and confirm the page renders and the main action works.
+4. **Real app:** install the extra programs the ordinary way for the chosen base — `npm install`, or a `.venv` and `pip install` — then start the app with the one documented launch command, open the browser at the documented address, and confirm the page renders and the main action works.
 5. **If it fails:** fix it and launch again — up to three attempts. Do not report the failure to the user unless it needs a decision only they can make, and then in plain language, never as a raw error message, stack trace or exit code.
 6. **After three failed attempts, stop.** Tell the user in plain language: what does not work, what already does work, and what you will try next. Never claim success, and never keep looping past three attempts.
 7. Only after a launch that worked: run `## Version control`, then report success and describe exactly what the user should see on screen.
@@ -136,7 +191,7 @@ Run this after the project files exist and after the launch check in `## Launch 
    git init
    ```
 
-   Only ever in the project folder chosen at `## Step 9` — never in a parent folder, and never in the user's home folder. `## Step 9` already guaranteed that folder is neither the home folder nor a folder full of the user's other things, so there is nothing to move and no path to rewrite here. Apart from the one case in step 1, never skip version control: skipping it hollows out the «верни, как было» promise the cheat sheet makes.
+   Only ever in the project folder chosen at `## Step 13` — never in a parent folder, and never in the user's home folder. `## Step 13` already guaranteed that folder is neither the home folder nor a folder full of the user's other things, so there is nothing to move and no path to rewrite here. Apart from the one case in step 1, never skip version control: skipping it hollows out the «верни, как было» promise the cheat sheet makes.
 
 3. **Write `.gitignore`** in the project root — in both cases, whether or not this project got a history of its own; it is a file inside the project folder, and the outer project's own `.gitignore` is still never touched. It must contain at least these two lines:
 
@@ -145,7 +200,7 @@ Run this after the project files exist and after the launch check in `## Launch 
    .DS_Store
    ```
 
-   For `## Real app`, add `node_modules/` as well. If the permissions step from `references/templates.md` already created `.gitignore` with the single `.claude/settings.local.json` line, add the missing lines to that same file — do not create a second one.
+   Add what the built base needs on top: `node_modules/` for Node.js; `.venv/` and `__pycache__/` for Python. A local SQLite file is the user's data — never put it in `.gitignore`. If the permissions step from `references/templates.md` already created `.gitignore` with the single `.claude/settings.local.json` line, add the missing lines to that same file — do not create a second one.
 
 4. **Make one initial commit** containing everything — skipped entirely when step 1 found this folder inside another project:
 
@@ -158,7 +213,7 @@ Run this after the project files exist and after the launch check in `## Launch 
 
 5. **Say nothing about any of this — unless it was blocked.** Do not narrate it, do not list it in the final report, and never use the word «репозиторий» with the user — `## Tone rules` bans it. In the cheat sheet this shows up only as the fact that «Верни, как было до последних изменений» works — or, in the step-1 case, does not appear at all. The one exception is the blocked-action rule in `## Tone rules` of `SKILL.md`: if `git init`, `git add` or the commit is denied or refused, never quietly skip the step and carry on. Say in plain words that the history of changes was not saved and that «вернуть предыдущую версию не получится» — the cheat sheet promises it, and silence would leave that promise empty. That rule is about a denial only; the skip in step 1 is not one, and is never announced.
 
-6. **Local only.** Never run `git push`, never add a remote, never mention GitHub, never ask whether the user wants to publish. This is a safety net on their own computer and nothing else. The `ask` rule on `Bash(git push:*)` in the permissions template is a guard rail, not an invitation to use it.
+6. **Local only.** Never run `git push`, never add a remote, never mention GitHub, never ask whether the user wants to publish — including when Step 8 said the project will one day live on the internet. That is a separate piece of work for a later conversation, and Step 8 already told the user so. The `ask` rule on `Bash(git push:*)` in the permissions template is a guard rail, not an invitation to use it.
 
 ## Never add
 
@@ -166,9 +221,10 @@ Not in either shape, no matter how tempting or how standard it looks elsewhere:
 
 - Git hooks of any kind.
 - A documentation gate, or any rule that blocks work until a document is updated.
-- A `docs/` tree, architecture decision records, or design documents. The project has `CLAUDE.md` and one cheat sheet, and that is all.
+- A `docs/` tree, architecture decision records, or design documents. The project has `CLAUDE.md`, one cheat sheet, and — only when the user gave a long sample at Step 10 — `design.md`. Nothing else.
 - A methodology or process layer on top of the project.
-- A monorepo, workspaces, or more than one `package.json`.
-- Multi-tenant data isolation.
+- A monorepo, workspaces, or more than one dependency manifest.
+- Separate data isolation per customer.
+- Anything from the plans at Step 4. Those are written into `CLAUDE.md` and built in a later conversation, never today — see `## Now and later` in `SKILL.md`.
 
-Anything the interview did not actually ask for is out of scope. When in doubt, build less: the user has to be able to hold the whole project in their head.
+Anything the interview did not actually ask for is out of scope. When in doubt, build less — but never less than the person asked for. Something they described at Step 3 or showed at Step 10 is in scope, and dropping it is not simplicity, it is a project that does not do the job.
