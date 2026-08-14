@@ -74,13 +74,14 @@ Neither mode removes a question. «Быстро» shortens the explanations, nev
 ## Step 3. What do you want to build
 
 Own turn. Free text. No picker in this turn.
-Question: «Расскажите своими словами, что вы хотите сделать. Не думайте о технике — просто опишите задачу.»
-Attach these three finance examples so the user can gauge the expected length of an answer:
+Question: «Расскажите своими словами, что вы хотите сделать. Не думайте о технике — просто опишите задачу. Коротко или подробно — как вам удобнее: одной фразой тоже нормально, а если расскажете подробно, будет только точнее.»
+Attach these three finance examples as examples of the *kind* of task, not of the length of an answer. Never present them as a target length — no «примерно такой длины ответ» and nothing that implies one line is what is expected:
 
 - «Хочу видеть на одной странице, сколько у меня денег на всех счетах и куда они уходят по месяцам.»
 - «Хочу загружать банковскую выписку и получать готовый отчёт по статьям расходов.»
 - «Хочу калькулятор, который считает график платежей по кредиту и показывает переплату.»
 
+One line and several paragraphs are both a correct answer here. Take whatever comes in full: never ask the person to shorten it, and never drop the detail they gave — it all carries into the plan and into what gets built.
 Do not ask follow-up questions here. The steps that follow resolve what is still unclear.
 
 ## Step 4. What comes next
