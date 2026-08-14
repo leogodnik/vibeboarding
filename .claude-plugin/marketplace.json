@@ -7,7 +7,7 @@
     {
       "name": "vibeboarding",
       "source": "./plugins/vibeboarding",
-      "version": "0.4.0",
+      "version": "0.7.0",
       "description": "VIBEBOARDING — старт нового проекта для тех, кто не программист: короткое интервью на понятном языке, дальше всё делает Клод.",
       "keywords": ["bootstrap", "beginners", "non-technical", "multilingual"]
     }
