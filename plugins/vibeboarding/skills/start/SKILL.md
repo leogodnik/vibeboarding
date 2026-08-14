@@ -178,13 +178,13 @@ Reference wording:
 Question: «Где будут храниться ваши данные? Два варианта, разница простая.»
 
 - «Файл рядом с проектом» — «Ставить и запускать ничего не надо. Данные лежат в папке проекта: скопировали папку — данные поехали вместе с ней, вернули проект к прежней версии — числа вернулись вместе с ним. Нескольким людям за одним компьютером этого хватает с запасом.»
-- «Настоящая база данных — если она у вас уже стоит» — «Выдерживает много людей одновременно и работу через интернет. Но живёт отдельно от папки проекта: вернёте проект к прежней версии — данные назад не вернутся. И если её на компьютере нет, ставить я её не буду — это отдельная работа.»
+- «Настоящая база данных» — «Выдерживает много людей одновременно и работу через интернет. Но живёт отдельно от папки проекта: вернёте проект к прежней версии — данные назад не вернутся. Если её на компьютере ещё нет — помогу поставить: покажу по шагам, куда нажимать, это несколько минут.»
 - «Не понимаю, объясните подробнее» — the fourth slot is free here, so the way out is a real option. Handle it per `## Interview rules`: two or three sentences on each of the two answers above, then this same question again.
 - «Не знаю — решите сами» → take whichever option you marked as the recommendation, name that choice in one sentence, move on.
 
-**Which one to recommend.** «Файл рядом с проектом» in almost every case: it is the right answer for one person, for a few people on one computer, and for anything that is not going on the internet yet. Recommend «настоящая база данных» only when the earlier answers point hard at it — Step 5 «Много людей» together with Step 8 «из интернета» — and even then say in the same breath that it only works if that database is already running on this computer.
+**Which one to recommend.** «Файл рядом с проектом» in almost every case: it is the right answer for one person, for a few people on one computer, and for anything that is not going on the internet yet. Recommend «настоящая база данных» only when the earlier answers point hard at it — Step 5 «Много людей» together with Step 8 «из интернета» — and even then say in the same breath what it costs: if that database is not on this computer yet, it has to be put there first, and that is a few extra minutes at the start with you walking them through it.
 
-**Never check what is installed here.** Running a command during the interview stops the user with an approval prompt they cannot judge, and the permissions file does not exist yet. The check happens at build time; `### Data` in `references/scaffolds.md` says exactly what to do when the answer and the computer disagree — one plain sentence to the user, never a silent swap.
+**Never check what is installed here.** Running a command during the interview stops the user with an approval prompt they cannot judge, and the permissions file does not exist yet. The check happens at build time; `### Data` in `references/scaffolds.md` says exactly what to do when the answer and the computer disagree — one plain sentence, then the offer to walk them through the installation, never a silent swap.
 
 Never use the word «база» as a threat or an achievement. It is one of two ordinary answers, and the recommended one is usually the simpler.
 
@@ -299,7 +299,7 @@ Step 15 retold the user's answers. This step says what will exist because of the
 
 - **Which screens there will be**, named the way the user would name them.
 - **Which parts of the interface, one by one. If Step 12 brought a ready-made design description, name every component it contains.** This is the most important line of the step and it is not optional. Such a description names things like a period picker, filters, a summary strip, a chart, a sortable table — and right now that text is the only place they exist. A part that was not said out loud here is a part that quietly does not get built, and the user finds out at the end. Name them, and they will tell you what is missing while it still costs nothing.
-- **Where the data will live**, in one plain phrase: «в файле рядом с проектом», «в базе, которая у вас уже запущена», «в самой странице, в браузере», «нигде — считается и забывается».
+- **Where the data will live**, in one plain phrase: «в файле рядом с проектом», «в настоящей базе данных», «в самой странице, в браузере», «нигде — считается и забывается». When the answer was «настоящая база данных», add half a sentence: if it is not on this computer yet, the first thing you will do together is put it there.
 - **What it is made on**, in three or four words — the name as a fact, not a justification and not a comparison.
 
 Those last two lines are not news any more when Steps 10 and 11 ran: the user chose both, and here you are simply reading their own answers back. Say them anyway — this is the list they are confirming — but never as though you had just decided them, and never with the reasoning again. When those steps were skipped, the same two lines are the whole of what the user gets told, which is exactly why they must not be dropped.

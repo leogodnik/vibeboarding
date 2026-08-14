@@ -248,7 +248,7 @@ Template:
 <The shape from Step 9, and the base the user chose at Step 11, written as their choice: «Пользователь выбрал Питон». Add the one-line reason that was given to them when it was recommended. If Step 11 did not run — the double-click shape — say so and name the shape instead. Whoever reads this file later must not re-decide the base: mark it as answered, not as open.>
 
 ## Где хранятся данные
-<The store the user chose at Step 10, written as their choice, one or two lines, with the reason they were given. If Step 10 did not run, say so and name the store the build will use anyway. Add what `### Data` in `references/scaffolds.md` requires of the build: a real database only if it is already running, and never installed. Plus the rule that every read and write goes through the query layer — that is a decision a later session must not quietly undo.>
+<The store the user chose at Step 10, written as their choice, one or two lines, with the reason they were given. If Step 10 did not run, say so and name the store the build will use anyway. Add what `### Data` in `references/scaffolds.md` requires of the build: a real database only when it is really running on this computer, and if it is not there yet, the user puts it there with you walking them through it — never installed by you. Plus the rule that every read and write goes through the query layer — that is a decision a later session must not quietly undo.>
 
 ## Из чего состоит оформление
 - <one line per screen and per part of the interface, named>
